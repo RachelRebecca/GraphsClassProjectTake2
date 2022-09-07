@@ -36,6 +36,7 @@ namespace GraphsClassProjectTakeTwo
             return false;
         }
 
+        // todo: add an out parameter to return the sum of the weights of the total path
         public List<Vertex> Dijkstra()
         {
             return new List<Vertex>();
