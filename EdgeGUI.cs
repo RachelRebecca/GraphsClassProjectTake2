@@ -9,6 +9,8 @@ namespace GraphsClassProjectTakeTwo
 {
     internal class EdgeGUI
     {
+        // todo: make this inherit from a control (like a button) which has an onHover method already
+        
         private Edge edge;
         private Panel panel;
 
