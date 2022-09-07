@@ -9,11 +9,11 @@ namespace GraphsClassProjectTakeTwo
     internal class Edge
     {
         // fields
-        private Vertex start { get; set; }
+        public Vertex Start { get; set; }
 
-        private Vertex end { get; set; }
+        public Vertex End { get; set; }
 
-        private int weight { get; set; }
+        public int Weight { get; set; }
 
         // constructor
         public Edge(Vertex start, Vertex end, int weight)
