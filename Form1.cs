@@ -17,6 +17,7 @@ namespace GraphsClassProjectTakeTwo
             InitializeComponent();
 
             // GETDATA METHOD GOES HERE
+            //todo: getdata should actually happen when clicking on a specific graph name
         }
     }
 }
