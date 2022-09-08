@@ -1,0 +1,100 @@
+------------------------------------------>start of file
+
+if exists(select * from sys.databases where name = 'Graph2')
+drop database [Graph2]
+
+GO
+create database [Graph2]
+GO
+
+
+/****** Object:  Table [dbo].[Info] ******/
+CREATE TABLE [dbo].[Info]
+(
+[Info_ID][int]  IDENTITY(1,1) NOT NULL,
+[Information][varchar](100) NULL,
+CONSTRAINT [PK_Info] PRIMARY KEY CLUSTERED ( [Info_ID] )
+    ) 
+GO
+------------------------------------------------------------------------------
+/****** Object:  Table [dbo].[Nodes] ******/
+CREATE TABLE [dbo].[Nodes]
+(
+[Node_ID][int] IDENTITY(1,1) NOT NULL,
+[ShortName][varchar](50) NOT NULL,
+[LocationX][float] NOT NULL, 
+[LocationY][float] NOT NULL,
+[Info_ID] [int] NULL FOREIGN KEY REFERENCES [Info](Info_ID)
+CONSTRAINT [PK_Nodes] PRIMARY KEY CLUSTERED ([Node_ID]),
+)
+GO
+------------------------------------------------------------------------------
+/****** Object:  Table [dbo].[GraphType] ******/
+CREATE TABLE [dbo].[GraphTypes]
+(
+[GraphType_ID][int]IDENTITY(1,1) NOT NULL,
+[Name][varchar](100) NOT NULL,
+[IsWeighted][bit] NOT NULL, 
+[IsDirected][bit] NOT NULL,
+CONSTRAINT [PK_GraphType] PRIMARY KEY CLUSTERED ([GraphType_ID]),
+)
+GO
+------------------------------------------------------------------------------
+/****** Object:  Table [dbo].[Graphs] ******/
+CREATE TABLE [dbo].[Graphs]
+(
+[Graph_ID][int]IDENTITY(1,1) NOT NULL,
+[Name][varchar](50) NOT NULL UNIQUE,
+[GraphType_ID] [int] NULL FOREIGN KEY REFERENCES [GraphTypes](GraphType_ID),
+CONSTRAINT [PK_Graphs] PRIMARY KEY CLUSTERED ( [Graph_ID] ),
+)
+GO
+------------------------------------------------------------------------------
+/****** Object:  Table [dbo].[Edges] ******/
+CREATE TABLE [dbo].[Edges]
+(
+[Edge_ID][int]IDENTITY(1,1) NOT NULL,
+[Weight][int] NOT NULL,
+CONSTRAINT [PK_Edges] PRIMARY KEY CLUSTERED ([Edge_ID]),
+[Graph_ID] [int] NULL FOREIGN KEY REFERENCES [Graphs](Graph_ID),
+[InitialNode_ID] [int] NULL FOREIGN KEY REFERENCES [Nodes](Node_ID),
+[TerminalNode_ID] [int] NULL FOREIGN KEY REFERENCES [Nodes](Node_ID),
+)
+GO 
+
+---------------------------> begin file
+USE Graph2;
+GO
+------------------------
+-- empty out all data --
+------------------------
+
+-------------
+--POPULATE--
+-------------
+INSERT INTO Info (Information)
+  VALUES ('InfoA'), ('InfoB'), 
+  ('InfoC'), ('InfoD'), ('InfoE'), ('InfoF'), ('InfoG'), 
+  ('InfoH'), ('InfoI'), ('InfoJ'), ('InfoK'), ('InfoL')
+
+INSERT INTO nodes (ShortName, LocationX, LocationY)
+  VALUES ('A', .25, .5), ('B', .5, .25), ('C', .5, .75), ('D', .75, .5), ('E', .6, .6)
+
+INSERT INTO graphtypes (NAME, IsWeighted, IsDirected)
+  VALUES ('Weighted_Undirected', 1, 0),
+  ('Unweighted_Directed', 0, 1),
+  ('Weighted_Directed', 1, 1),
+  ('Unweighted_Undirected', 0, 0)
+
+INSERT INTO graphs (NAME,
+graphtype_id)
+  VALUES ('Grp_A', 1),
+  ('Grp_B', 2),
+  ('Grp_C', 3),
+  ('Grp_D', 4);
+
+INSERT INTO edges (graph_id,
+initialnode_id,
+terminalnode_id,
+weight)
+VALUES (3, 1, 2, 3), (3, 1, 3, 5), (3, 2, 4, 8), (3, 3, 5, 4)
