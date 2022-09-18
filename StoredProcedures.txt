@@ -1,39 +1,31 @@
 Use Graph2
 GO
 ---returns graph name and graph type
-CREATE PROC spGetGraphNamesAndFlags
+CREATE PROC spGetGraphNames
 AS
-SELECT grp.Name AS Name, typ.IsWeighted as IsWeighted, typ.IsDirected as IsDirected
+SELECT grp.Name AS Name
+FROM Graphs grp
+GO
+
+exec spGetGraphNames
+
+--returns isWeighted and isDirected
+CREATE PROC spGetGraphFlags @GraphName varchar(50)
+AS
+SELECT typ.IsWeighted as IsWeighted, typ.IsDirected as IsDirected
 FROM Graphs grp
 INNER JOIN GraphTypes typ
 ON grp.GraphType_ID = typ.GraphType_ID
+WHERE grp.name = @GraphName
 GO
 
-exec spGetGraphNamesAndFlags
-
-
-/*
-CREATE PROC spGetEdges @GraphName varchar(50)
-AS
-SELECT ini.ShortName AS [Initial Node Name], ter.ShortName AS [Terminal Node Name],  [Weight]
-FROM Edges edg
-INNER JOIN Graphs grp
-on edg.Graph_ID = grp.Graph_ID
-INNER JOIN Nodes ini
-ON ini.Node_ID = edg.InitialNode_ID 
-INNER JOIN Nodes ter
-ON ter.Node_ID = edg.TerminalNode_ID 
-WHERE grp.name = @GraphName
-Order by ini.Node_ID
-
---Declare @GraphName varchar(50)
---Set @GraphName = 'Grp_C'
---exec spGetEdges @GraphName = 'Grp_C'
-*/
+Declare @GraphName varchar(50)
+Set @GraphName = 'Grp_C'
+exec spGetGraphFlags @GraphName = 'Grp_C'
 
 ---returns initialNodeName, initialLocationX, initialLocationY,
 --terminalNodeName, terminalLocationX, terminalLocation, weight
-ALTER PROC spGetEdges @GraphName varchar(50)
+CREATE PROC spGetEdges @GraphName varchar(50)
 AS
 SELECT ini.ShortName AS [Initial Node Name], ini.LocationX as [Initial X], ini.LocationY as [Initial Y],
 	   ter.ShortName AS [Terminal Node Name], ter.LocationX as [Terminal X], ter.LocationY as [Terminal Y],
