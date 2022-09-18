@@ -23,42 +23,56 @@ namespace GraphsClassProjectTakeTwo
         private List<Edge> Edges { get; set; } // TODO: only edge list?
 
         // constructor
-        public Graph(String name, bool weighted, bool directed)
+        public Graph(String name, SqlConnection sqlCon)
         {
             this.Name = name;
-            this.IsWeighted = weighted;
-            this.IsDirected = directed;
             this.Vertices = new List<Vertex>();
             this.Edges = new List<Edge>();
+            LoadGraph(sqlCon);
         }
 
 
         // methods
-        public bool LoadGraph(SqlConnection sqlCon, String name) // TODO: convert to GraphType
+        public bool LoadGraph(SqlConnection sqlCon) // TODO: convert to GraphType
         {
             bool retVal = true;
             try
             {
+                //get graph type
+                SqlCommand getGraphType = new SqlCommand ("spGetType", sqlCon)
                 SqlCommand getEdgesForGraph = new SqlCommand("spGetEdges", sqlCon);
 
                 SqlParameter sqlParameter = new SqlParameter();
                 sqlParameter.ParameterName = "@GraphName";
-                sqlParameter.Value = name;
+                sqlParameter.Value = this.Name;
+                getGraphType.Parameters.Add(sqlParameter);
                 getEdgesForGraph.Parameters.Add(sqlParameter);
+
+                getGraphType.CommandType = CommandType.StoredProcedure;
+                getGraphType.ExecuteNonQuery();
+                SqlDataAdapter da1 = new SqlDataAdapter(getGraphType);
+                DataSet dataSet1 = new DataSet();
+                da1.Fill(dataSet1, "Flags");
+
+                this.IsWeighted = (String)dataset1.Tables["Flags"].[0].ItemArray[0] == "1"; 
+                this.IsDirected = (String)dataset1.Tables["Flags"].[0].ItemArray[1] == "1";
 
                 getEdgesForGraph.CommandType = CommandType.StoredProcedure;
                 getEdgesForGraph.ExecuteNonQuery();
                 SqlDataAdapter da2 = new SqlDataAdapter(getEdgesForGraph);
-                DataSet dataSet = new DataSet();
-                da2.Fill(dataSet, "Edges");
+                DataSet dataSet2 = new DataSet();
+                da2.Fill(dataSet2, "Edges");
                 // edge table: initialNode, terminalNode, weight (should be 1)
 
-                var nrEdges = dataSet.Tables["Edges"].Rows.Count;
-                for (int row = 0; row < nrEdges; ++row)
+                foreach (DataRow row in dataset2)
                 {
-                    // check initial node
-                    String initialNode = (String)dataSet.Tables["Edges"].Rows[row].ItemArray[0];
-                    String terminalNode = (String)dataSet.Tables["Edges"].Rows[row].ItemArray[1];
+                    String initialNode = (String)row.ItemArray[0];
+                    String initialNodeX = (String)row.ItemArray[1];
+                    String initialNodeY = (String)row.ItemArray[2];
+                    String terminalNode = (String)row.ItemArray[3];                
+                    String terminalNodeX = (String)row.ItemArray[4];              
+                    String terminalNodeY = (String)row.ItemArray[5];
+                    String weight = (String)row.ItemArray[6];
 
                     int initialIndex = Vertices.FindIndex(item => initialNode.Equals(item.Name));
                     int terminalIndex = Vertices.FindIndex(item => terminalNode.Equals(item.Name));
@@ -67,6 +81,9 @@ namespace GraphsClassProjectTakeTwo
                                                     : Vertices[initialIndex];
                     Vertex terminal = terminalIndex < 0 ? new Vertex(terminalNode)
                                                     : Vertices[terminalIndex];
+
+                    Edge newEdge = new Edge(initial, terminal, weight);
+                    Edges.Add(newEdge);
 
                     if (initialIndex < 0 && terminalIndex < 0)
                     {
@@ -85,8 +102,8 @@ namespace GraphsClassProjectTakeTwo
                         Vertices.Add(terminal);
                     }
                     // if they both already exist, no need to add anything
-                    initial.AddEdge(terminal, 1);
-                    terminal.AddEdge(initial, 1);
+                    initial.AddEdge(newEdge);
+                    terminal.AddEdge(newEdge);
                 }
             }
             catch (Exception e)
