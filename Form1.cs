@@ -50,11 +50,14 @@ namespace GraphsClassProjectTakeTwo
             DataSet dataset1 = new DataSet();
             da1.Fill(dataset1, "Graphs");
 
-            ArrayList<String> GraphNames = new ArrayList<String>();
 
-            foreach (DataRow row in dataset1)
+            List<String> GraphNames = new List<String>();
+
+            var nrGraphs = dataset1.Tables["Graphs"].Rows.Count;
+
+            for (int row = 0; row < nrGraphs; ++row)
             {
-                GraphNames.add((String)row.ItemArray[0]);
+                GraphNames.Add((String)dataset1.Tables["Graphs"].Rows[row].ItemArray[0]);
             }
 
             return GraphNames;

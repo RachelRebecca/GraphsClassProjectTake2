@@ -39,7 +39,7 @@ namespace GraphsClassProjectTakeTwo
             try
             {
                 //get graph type
-                SqlCommand getGraphType = new SqlCommand ("spGetType", sqlCon)
+                SqlCommand getGraphType = new SqlCommand("spGetType", sqlCon);
                 SqlCommand getEdgesForGraph = new SqlCommand("spGetEdges", sqlCon);
 
                 SqlParameter sqlParameter = new SqlParameter();
@@ -54,8 +54,9 @@ namespace GraphsClassProjectTakeTwo
                 DataSet dataSet1 = new DataSet();
                 da1.Fill(dataSet1, "Flags");
 
-                this.IsWeighted = (String)dataset1.Tables["Flags"].[0].ItemArray[0] == "1"; 
-                this.IsDirected = (String)dataset1.Tables["Flags"].[0].ItemArray[1] == "1";
+                // if it's "1", then it's true otherwise it's false
+                this.IsWeighted = (String)dataSet1.Tables["Flags"].Rows[0].ItemArray[0] == "1";
+                this.IsDirected = (String)dataSet1.Tables["Flags"].Rows[0].ItemArray[1] == "1"; 
 
                 getEdgesForGraph.CommandType = CommandType.StoredProcedure;
                 getEdgesForGraph.ExecuteNonQuery();
@@ -64,15 +65,28 @@ namespace GraphsClassProjectTakeTwo
                 da2.Fill(dataSet2, "Edges");
                 // edge table: initialNode, terminalNode, weight (should be 1)
 
-                foreach (DataRow row in dataset2)
+                var nrEdges = dataSet2.Tables["Edges"].Rows.Count;
+
+                for (int row = 0; row < nrEdges; ++row)
                 {
-                    String initialNode = (String)row.ItemArray[0];
-                    String initialNodeX = (String)row.ItemArray[1];
-                    String initialNodeY = (String)row.ItemArray[2];
-                    String terminalNode = (String)row.ItemArray[3];                
-                    String terminalNodeX = (String)row.ItemArray[4];              
-                    String terminalNodeY = (String)row.ItemArray[5];
-                    String weight = (String)row.ItemArray[6];
+                    String initialNode = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[0];
+                    String initialNodeX = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[1];
+                    String initialNodeY = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[2];
+                    String terminalNode = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[3];                
+                    String terminalNodeX = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[4];              
+                    String terminalNodeY = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[5];
+
+                    // TODO: store initialNodeX, initialNodeY, terminalNodeX, terminalNodeY somewhere
+
+                    double weight;
+                    try
+                    {
+                        weight = Double.Parse((String)dataSet2.Tables["Edges"].Rows[row].ItemArray[6]);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Invalid weight in row " + row);
+                    }
 
                     int initialIndex = Vertices.FindIndex(item => initialNode.Equals(item.Name));
                     int terminalIndex = Vertices.FindIndex(item => terminalNode.Equals(item.Name));
@@ -82,7 +96,9 @@ namespace GraphsClassProjectTakeTwo
                     Vertex terminal = terminalIndex < 0 ? new Vertex(terminalNode)
                                                     : Vertices[terminalIndex];
 
-                    Edge newEdge = new Edge(initial, terminal, weight);
+
+                    Edge newEdge = new Edge(initial, terminal, weight); 
+
                     Edges.Add(newEdge);
 
                     if (initialIndex < 0 && terminalIndex < 0)
@@ -101,9 +117,16 @@ namespace GraphsClassProjectTakeTwo
                         // terminal doesn't exist, create and add edge between initial and it with weight = 1
                         Vertices.Add(terminal);
                     }
-                    // if they both already exist, no need to add anything
-                    initial.AddEdge(newEdge);
-                    terminal.AddEdge(newEdge);
+                    // else, they both already exist and there's no need to create any new vertices
+                    
+                    
+                    // Regardless, adding edge from initial -> terminal 
+                    terminal.AddEdge(initial, weight);
+                    if (!IsDirected)
+                    {
+                        // and if not directed, from terminal -> initial
+                        initial.AddEdge(terminal, weight);
+                    }
                 }
             }
             catch (Exception e)
@@ -124,15 +147,38 @@ namespace GraphsClassProjectTakeTwo
 
         public List<Edge> Kruskal()
         {
-            List<Edge> shortestPath = new List<Edge>;
-            List<Edge> orderedEdges = this.Edges.Sort((x, y) => x.Weight - y.Weight);
+            List<Edge> shortestPath = new List<Edge>();
+
+            // TODO: Is this an accurate sort??
+            /* Possible alternative:
+             private List<EdgeStruct> SortEdges()
+              {
+             List<EdgeStruct> Sorted = new List<EdgeStruct>();
+             foreach (EdgeStruct AddingEdge in Edges)
+             {
+                 foreach (EdgeStruct SortedEdge in Sorted)
+                 {
+                     if (AddingEdge.weight < SortedEdge.weight)
+                     {
+                         Sorted.Add(AddingEdge);
+                     }
+                 }
+                 if (!(Sorted[Sorted.Count - 1]).Equals(AddingEdge))
+                 {
+                     Sorted.Add(AddingEdge);
+                 }
+             }
+             return Sorted;
+             }
+             */
+            List<Edge> orderedEdges = Edges.OrderBy((w) => w.Weight).ToList();
 
             List<List<Vertex>> visited = new List<List<Vertex>>();
 
             while (shortestPath.Count < this.Vertices.Count - 1)
             {
                 Edge shortest = orderedEdges.ElementAt(0);
-                int foundSoureWhere = -1;
+                int foundSourceWhere = -1;
                 int foundDestinationWhere = -1;
 
                 //check if will create cycle
@@ -140,11 +186,11 @@ namespace GraphsClassProjectTakeTwo
                 {
                     foreach (Vertex currVertex in connectedVertices)
                     {
-                        if (currVertex == shortest.source)
+                        if (currVertex == shortest.Start)
                         {
                             foundSourceWhere = visited.IndexOf(connectedVertices);
                         }
-                        else if (currVertex == shortest.Destination)
+                        else if (currVertex == shortest.End)
                         {
                             foundDestinationWhere = visited.IndexOf(connectedVertices);
                         }
@@ -156,14 +202,14 @@ namespace GraphsClassProjectTakeTwo
                     if (foundDestinationWhere == -1)
                     {
                         List<Vertex> unconnected = new List<Vertex>();
-                        unconnected.Add(shortest.source);
-                        unconnected.Add(shortest.Destination);
+                        unconnected.Add(shortest.Start);
+                        unconnected.Add(shortest.End);
                         visited.Add(unconnected);
                         shortestPath.Add(shortest);
                     }
                     else
                     {
-                        visited[foundDestinationWhere].Add(shortest.source);
+                        visited[foundDestinationWhere].Add(shortest.Start);
                         shortestPath.Add(shortest);
                     }
                 }
@@ -171,7 +217,7 @@ namespace GraphsClassProjectTakeTwo
                 {
                     if (foundDestinationWhere == -1)
                     {
-                        visited[foundSourceWhere].Add(shortest.Destination);
+                        visited[foundSourceWhere].Add(shortest.End);
                         shortestPath.Add(shortest);
                     }
                     else if (foundDestinationWhere != foundSourceWhere)
@@ -202,7 +248,7 @@ namespace GraphsClassProjectTakeTwo
         public List<Vertex> TopologicalSort()
         {
             // backup in case the button isn't properly disabled
-            if (!this.IsDirected) throw new Exception('forbidden algorithm attempt');
+            if (!this.IsDirected) throw new Exception("forbidden algorithm attempt");
 
             List<Vertex> sorted = new List<Vertex>();
 
@@ -214,11 +260,11 @@ namespace GraphsClassProjectTakeTwo
 
             foreach (Vertex vertex in this.Vertices)
             {
-                foreach (Edge edge in vertex.edges)
+                foreach (Edge edge in vertex.Edges)
                 {
-                    if (edge.Start.Equals(vertex)
+                    if (edge.Start.Equals(vertex))
                     {
-                        adjacencyList.Add(vertex, edge.End)
+                        adjacencyList.Add(vertex, edge.End); // TODO: List<Vertex> not single vertex
                     }
                 }
                 indegreeList.Add(vertex, vertex.Indegree);

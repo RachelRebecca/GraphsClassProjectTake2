@@ -9,19 +9,19 @@ namespace GraphsClassProjectTakeTwo
     internal class Vertex
     {
         public String Name { get; set; }
-        public List<Edge> Edges { get; set; } // THE CHANGE 
+        public List<Edge> Edges { get; set; }
         public int Indegree { get; set; }
 
         public Vertex(String nm)
         {
             Name = nm;
             Indegree = 0;
-            edges = new List<Edge>();
+            Edges = new List<Edge>();
         }
 
-        public void AddEdge(Vertex source, int weight)
+        public void AddEdge(Vertex source, double weight)
         {
-            edges.Add(new Edge(source, this, weight));
+            Edges.Add(new Edge(source, this, weight)); // Each vertex knows the edges that are pointing to it
             this.Indegree++;
         }
     }
