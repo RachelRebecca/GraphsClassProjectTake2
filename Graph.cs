@@ -39,7 +39,7 @@ namespace GraphsClassProjectTakeTwo
             try
             {
                 //get graph type
-                SqlCommand getGraphType = new SqlCommand("spGetType", sqlCon);
+                SqlCommand getGraphType = new SqlCommand("spGetGraphFlags", sqlCon);
                 SqlCommand getEdgesForGraph = new SqlCommand("spGetEdges", sqlCon);
 
                 SqlParameter sqlParameter = new SqlParameter();
@@ -97,24 +97,25 @@ namespace GraphsClassProjectTakeTwo
                                                     : Vertices[terminalIndex];
 
 
-                    Edge newEdge = new Edge(initial, terminal, weight); 
+                    Edge newEdge = new Edge(initial, terminal, weight); // weight = 1 for unweighted and database weights for weighted
+
 
                     Edges.Add(newEdge);
 
                     if (initialIndex < 0 && terminalIndex < 0)
                     {
-                        // neither exist - create both, add edge between them with weight = 1
+                        // neither exist - create both, add edge between them
                         Vertices.Add(initial);
                         Vertices.Add(terminal);
                     }
                     else if (initialIndex < 0 && terminalIndex > -1)
                     {
-                        // initial doesn't exist, create and add edge between it and terminal with weight = 1
+                        // initial doesn't exist, create and add edge between it and terminal
                         Vertices.Add(initial);
                     }
                     else if (initialIndex > -1 && terminalIndex < 0)
                     {
-                        // terminal doesn't exist, create and add edge between initial and it with weight = 1
+                        // terminal doesn't exist, create and add edge between initial and it
                         Vertices.Add(terminal);
                     }
                     // else, they both already exist and there's no need to create any new vertices
@@ -122,11 +123,8 @@ namespace GraphsClassProjectTakeTwo
                     
                     // Regardless, adding edge from initial -> terminal 
                     terminal.AddEdge(initial, weight);
-                    if (!IsDirected)
-                    {
-                        // and if not directed, from terminal -> initial
-                        initial.AddEdge(terminal, weight);
-                    }
+                    // if it's undirected, it's going to be officially initial -> terminal, but it won't make any real difference,
+                    // this way there's only one edge for any given pair of vertices
                 }
             }
             catch (Exception e)
@@ -241,9 +239,88 @@ namespace GraphsClassProjectTakeTwo
 
         public List<Edge> Prim()
         {
+           
             return new List<Edge>();
 
         }
+
+        /*
+         * public Vertex[,] PrimMinSpanningGraph(Vertex start)
+        {
+            Vertex[,] edges = new Vertex[graph.Vertices.Count - 1, 2];
+            List<PrimStruct> prims = new List<PrimStruct>();
+            List<Vertex> foundVertices = new List<Vertex>();
+            int numEdgesFound = 0;
+
+            foundVertices.Add(start);
+
+            // add prims for all neighbors of start
+            foreach (Vertex neighbor in start.Neighbors)
+            {
+                if (!foundVertices.Contains(neighbor))
+                {
+                    prims.Add(new PrimStruct(neighbor,
+                        graph.GetWeight(start, neighbor),
+                        start));
+                }
+            }
+
+            while (numEdgesFound < graph.Vertices.Count - 1)
+            {
+
+                // get the vertex with the shortest cost
+                prims.Sort((x, y) => x.Cost.CompareTo(y.Cost));
+                PrimStruct currentPrim = prims[0];
+                prims.RemoveAt(0);
+
+                // add an edge to that prim
+                edges[numEdgesFound, 0] = currentPrim.Parent;
+                edges[numEdgesFound, 1] = currentPrim.vertex;
+                foundVertices.Add(currentPrim.vertex);
+                numEdgesFound++;
+
+                foreach (Vertex neighbor in currentPrim.vertex.Neighbors)
+                {
+                    if (!foundVertices.Contains(neighbor))
+                    {
+                        PrimStruct neighborPrim = prims.Find(p => p.vertex.Equals(neighbor));
+                        if (neighborPrim.vertex != null)
+                        {
+                            if (graph.GetWeight(currentPrim.vertex, neighbor) < neighborPrim.Cost)
+                            {
+                                neighborPrim.Cost = graph.GetWeight(currentPrim.vertex, neighbor);
+                                neighborPrim.Parent = currentPrim.vertex;
+                            }
+                        }
+                        else
+                        {
+                            prims.Add(new PrimStruct(neighbor,
+                            graph.GetWeight(currentPrim.vertex, neighbor),
+                            currentPrim.vertex));
+                        }
+                    }
+
+                }
+            }
+
+            return edges;
+        }
+
+        struct PrimStruct
+        {
+            public PrimStruct(Vertex vertex, int cost, Vertex parent)
+            {
+                this.vertex = vertex;
+                this.Cost = cost;
+                this.Parent = parent;
+            }
+
+            internal Vertex vertex;
+            internal int Cost { get; set; }
+            internal Vertex Parent { get; set; }
+        }
+    }
+         */
 
         public List<Vertex> TopologicalSort()
         {
@@ -258,15 +335,17 @@ namespace GraphsClassProjectTakeTwo
             // make indegree list (use each vertex's indegree) - dictionary
             Dictionary<Vertex, int> indegreeList = new Dictionary<Vertex, int>();
 
+            List<Vertex> terminalVertices = new List<Vertex>();
             foreach (Vertex vertex in this.Vertices)
             {
                 foreach (Edge edge in vertex.Edges)
                 {
                     if (edge.Start.Equals(vertex))
                     {
-                        adjacencyList.Add(vertex, edge.End); // TODO: List<Vertex> not single vertex
+                        terminalVertices.Add(edge.End);
                     }
                 }
+                adjacencyList.Add(vertex, terminalVertices);
                 indegreeList.Add(vertex, vertex.Indegree);
             }
 
@@ -307,7 +386,7 @@ namespace GraphsClassProjectTakeTwo
                     }
                 }
                 
-                if (numVerticesAdded > graph.Vertices.Count)
+                if (numVerticesAdded > Vertices.Count)
                 {
                     throw new Exception("Graph contains cycle");
                 }
