@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace GraphsClassProjectTakeTwo
 {
@@ -56,7 +57,7 @@ namespace GraphsClassProjectTakeTwo
 
                 // if it's "1", then it's true otherwise it's false
                 this.IsWeighted = (String)dataSet1.Tables["Flags"].Rows[0].ItemArray[0] == "1";
-                this.IsDirected = (String)dataSet1.Tables["Flags"].Rows[0].ItemArray[1] == "1"; 
+                this.IsDirected = (String)dataSet1.Tables["Flags"].Rows[0].ItemArray[1] == "1";
 
                 getEdgesForGraph.CommandType = CommandType.StoredProcedure;
                 getEdgesForGraph.ExecuteNonQuery();
@@ -72,8 +73,8 @@ namespace GraphsClassProjectTakeTwo
                     String initialNode = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[0];
                     String initialNodeX = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[1];
                     String initialNodeY = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[2];
-                    String terminalNode = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[3];                
-                    String terminalNodeX = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[4];              
+                    String terminalNode = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[3];
+                    String terminalNodeX = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[4];
                     String terminalNodeY = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[5];
 
                     // TODO: store initialNodeX, initialNodeY, terminalNodeX, terminalNodeY somewhere
@@ -119,8 +120,8 @@ namespace GraphsClassProjectTakeTwo
                         Vertices.Add(terminal);
                     }
                     // else, they both already exist and there's no need to create any new vertices
-                    
-                    
+
+
                     // Regardless, adding edge from initial -> terminal 
                     terminal.AddEdge(initial, weight);
                     // if it's undirected, it's going to be officially initial -> terminal, but it won't make any real difference,
@@ -237,17 +238,12 @@ namespace GraphsClassProjectTakeTwo
 
         }
 
-        public List<Edge> Prim()
+        public List<Edge> Prim(Vertex start)
         {
-           
-            return new List<Edge>();
+            // Has to a weighted graph 
+            if (!this.IsWeighted || this.IsDirected) throw new Exception("forbidden algorithm attempt");
 
-        }
-
-        /*
-         * public Vertex[,] PrimMinSpanningGraph(Vertex start)
-        {
-            Vertex[,] edges = new Vertex[graph.Vertices.Count - 1, 2];
+            Edge[] edges = new Edge[Vertices.Count - 1];
             List<PrimStruct> prims = new List<PrimStruct>();
             List<Vertex> foundVertices = new List<Vertex>();
             int numEdgesFound = 0;
@@ -255,17 +251,16 @@ namespace GraphsClassProjectTakeTwo
             foundVertices.Add(start);
 
             // add prims for all neighbors of start
-            foreach (Vertex neighbor in start.Neighbors)
+            foreach (Edge edge in start.Edges)
             {
+                Vertex neighbor = edge.Start.Equals(start) ? edge.End : edge.Start;
                 if (!foundVertices.Contains(neighbor))
                 {
-                    prims.Add(new PrimStruct(neighbor,
-                        graph.GetWeight(start, neighbor),
-                        start));
+                    prims.Add(new PrimStruct(neighbor, edge.Weight, start));
                 }
             }
 
-            while (numEdgesFound < graph.Vertices.Count - 1)
+            while (numEdgesFound < Vertices.Count - 1)
             {
 
                 // get the vertex with the shortest cost
@@ -274,41 +269,43 @@ namespace GraphsClassProjectTakeTwo
                 prims.RemoveAt(0);
 
                 // add an edge to that prim
-                edges[numEdgesFound, 0] = currentPrim.Parent;
-                edges[numEdgesFound, 1] = currentPrim.vertex;
+                edges[numEdgesFound] = Edges.Find(e => (e.Start.Equals(currentPrim.Parent) && e.End.Equals(currentPrim.vertex)) ||
+                                                       (e.Start.Equals(currentPrim.vertex) && e.End.Equals(currentPrim.Parent))); 
+
                 foundVertices.Add(currentPrim.vertex);
                 numEdgesFound++;
 
-                foreach (Vertex neighbor in currentPrim.vertex.Neighbors)
+                foreach (Edge edge in currentPrim.vertex.Edges)
                 {
+                    Vertex neighbor = edge.Start.Equals(start) ? edge.End : edge.Start;
+
                     if (!foundVertices.Contains(neighbor))
                     {
                         PrimStruct neighborPrim = prims.Find(p => p.vertex.Equals(neighbor));
                         if (neighborPrim.vertex != null)
                         {
-                            if (graph.GetWeight(currentPrim.vertex, neighbor) < neighborPrim.Cost)
+                            if (edge.Weight < neighborPrim.Cost)
                             {
-                                neighborPrim.Cost = graph.GetWeight(currentPrim.vertex, neighbor);
+                                neighborPrim.Cost = edge.Weight;
                                 neighborPrim.Parent = currentPrim.vertex;
                             }
                         }
                         else
                         {
-                            prims.Add(new PrimStruct(neighbor,
-                            graph.GetWeight(currentPrim.vertex, neighbor),
-                            currentPrim.vertex));
+                            prims.Add(new PrimStruct(neighbor, edge.Weight, currentPrim.vertex));
                         }
                     }
 
                 }
             }
 
-            return edges;
+            return edges.ToList();
+
         }
 
         struct PrimStruct
         {
-            public PrimStruct(Vertex vertex, int cost, Vertex parent)
+            public PrimStruct(Vertex vertex, double cost, Vertex parent)
             {
                 this.vertex = vertex;
                 this.Cost = cost;
@@ -316,11 +313,10 @@ namespace GraphsClassProjectTakeTwo
             }
 
             internal Vertex vertex;
-            internal int Cost { get; set; }
+            internal double Cost { get; set; }
             internal Vertex Parent { get; set; }
         }
-    }
-         */
+
 
         public List<Vertex> TopologicalSort()
         {
@@ -385,7 +381,7 @@ namespace GraphsClassProjectTakeTwo
                         zeroes.Enqueue(neighbor);
                     }
                 }
-                
+
                 if (numVerticesAdded > Vertices.Count)
                 {
                     throw new Exception("Graph contains cycle");
