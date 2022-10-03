@@ -139,10 +139,125 @@ namespace GraphsClassProjectTakeTwo
         }
 
         // todo: add an out parameter to return the sum of the weights of the total path
-        public List<Vertex> Dijkstra()
+        public List<Vertex> Dijkstra(Vertex source, Vertex target, out double shortestDistance)
         {
+            if (source.Equals(target))
+            {
+                throw new Exception("Source and target are the same. Shortest distance: 0.0");
+            }
+
+            shortestDistance = 0.0;
             return new List<Vertex>();
+
+
+            Dictionary<Vertex, DijkstraStruct> vertexAndStruct = new Dictionary<Vertex, DijkstraStruct>();
+            DijkstraStruct currNode = new DijkstraStruct(true, 0, source, source);
+
+            vertexAndStruct.Add(source, currNode);
+
+            while (currNode.Vertex != target)
+            {
+                foreach (Edge edge in currNode.Vertex.Edges)
+                {
+                    // TODO: refactor, this is used in Prim
+                    Vertex neighbor = edge.Start.Equals(currNode.Vertex) ? edge.End : edge.Start;
+                    currNode = UpdateStructs(vertexAndStruct, currNode, out DijkstraStruct currStruct, out int newDistance, neighbor);
+
+                }
+
+                currNode = GetNewCurrNode(vertexAndStruct, currNode);
+
+                CreatePath(source, vertexAndStruct, currNode);
+
+                shortestDistance = currNode.DistanceFromStart;
+
+            }
         }
+
+        struct DijkstraStruct
+        {
+            internal bool SdFound { get; set; }
+            internal int DistanceFromStart { get; set; }
+            internal Vertex Parent { get; set; }
+            internal Vertex Vertex { get; set; }
+
+            public DijkstraStruct(bool sdFound, int distanceFromStart, Vertex parent, Vertex vertex)
+            {
+                this.SdFound = sdFound;
+                this.DistanceFromStart = distanceFromStart;
+                this.Parent = parent;
+                this.Vertex = vertex;
+            }
+        }
+
+        /*
+        private static Dijkstra GetNewCurrNode(Dictionary<Vertex, Dijkstra> vertexStructs, Dijkstra currNode)
+        {
+            //find shortest false node and set to currNode and true
+            int shortestFalse = MaxVal;
+            foreach (KeyValuePair<Vertex, Dijkstra> d in vertexStructs)
+            {
+
+                if (!d.Value.SdFound && d.Value.DistanceFromStart < shortestFalse)
+                {
+                    currNode = d.Value;
+                    shortestFalse = d.Value.DistanceFromStart;
+                }
+            }
+
+            if (shortestFalse == MaxVal)
+            {
+                //all shortest paths have been found
+                throw new Exception("No path exists");
+            }
+
+
+            currNode.SdFound = true;
+            vertexStructs.Remove(currNode.Vertex);
+            vertexStructs.Add(currNode.Vertex, currNode);
+            return currNode;
+        }
+
+        private Dijkstra UpdateStructs(Dictionary<Vertex, Dijkstra> vertexStructs, Dijkstra currNode, out Dijkstra currStruct, out int newDistance, Vertex neighbor)
+        {
+            if (!vertexStructs.ContainsKey(neighbor))
+            {
+                Dijkstra newNode = new Dijkstra(false, MaxVal, null, neighbor);
+                vertexStructs.Add(neighbor, newNode);
+            }
+
+            currStruct = vertexStructs[neighbor];
+            newDistance = vertexStructs[currNode.Vertex].DistanceFromStart + graph.GetWeight(currNode.Vertex, neighbor);
+
+            if (newDistance < currStruct.DistanceFromStart)
+            {
+                //update parent and shortest dist of v
+                currStruct.Parent = currNode.Vertex;
+                currStruct.DistanceFromStart = newDistance;
+                vertexStructs.Remove(neighbor);
+                vertexStructs.Add(neighbor, currStruct);
+
+
+            }
+
+            return currNode;
+        }
+
+        private void CreatePath(Vertex source, Dictionary<Vertex, Dijkstra> vertexStructs, Dijkstra currNode)
+        {
+            Vertex parent = currNode.Parent;
+            Path.Add(parent);
+
+            while (parent != source)
+            {
+                parent = vertexStructs[parent].Parent;
+                Path.Insert(0, parent);
+            }
+
+            Path.Add(currNode.Vertex);
+            
+        }
+         */
 
         public List<Edge> Kruskal()
         {
