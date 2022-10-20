@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace GraphsClassProjectTakeTwo
 {
@@ -88,10 +89,13 @@ namespace GraphsClassProjectTakeTwo
 
                 panelGraphButtons.Controls.Add(button);
             }
+            panelGraphButtons.Refresh();
         }
 
         private void btn_Click(object sender, EventArgs e)
         {
+            panelGraph.Controls.Clear();
+
             Button button = (Button)sender;
 
             Graph graph = new Graph(button.Name, sqlCon);
@@ -102,28 +106,66 @@ namespace GraphsClassProjectTakeTwo
 
         private void ShowGraph(Graph graph)
         {
+            CreateLabelType(graph);
             CreateLabelNodes(graph);
             CreateGraphics(graph);
         }
 
-        private void CreateLabelNodes(Graph graph)
+        private void CreateLabelType(Graph graph)
+        {
+            Label labelGraphType = new Label();
+            labelGraphType.Location = new Point(15, 20);
+
+            String type = "";
+            switch (graph.IsWeighted)
+            {
+                case true:
+                    type += "Weighted ";
+                    break;
+                case false:
+                    type += "Unweighted ";
+                    break;
+            }
+            switch (graph.IsDirected)
+            {
+                case true:
+                    type += "Digraph";
+                    break;
+                case false:
+                    type += "Graph";
+                    break;
+            }
+      
+            labelGraphType.Text = type;
+            labelGraphType.BringToFront();
+            labelGraphType.Refresh();
+            panelGraph.Controls.Add(labelGraphType);
+        }
+
+
+        private void CreateLabelsAndNodes(Graph graph)
         {
             List<Label> labelNodes = new List<Label>();
             for (int nodeNumber = 0; nodeNumber < graph.Vertices.Count; nodeNumber++)
             {
                 Label label = new Label();
                 label.Text = graph.Vertices[nodeNumber].Name;
-                label.TextAlign = ContentAlignment.MiddleCenter;
+                label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
                 Graphics graphics = panelGraph.CreateGraphics();
                 Pen pen = new Pen(Color.Black);
-                Point location = new Point((int)graph.Vertices[nodeNumber].XCoord * panelGraph.Width, (int)(graph.Vertices[nodeNumber].YCoord * panelGraph.Height));
+                Point location = new Point((int)(graph.Vertices[nodeNumber].XCoord * panelGraph.Width), (int)(graph.Vertices[nodeNumber].YCoord * panelGraph.Height));
+                Console.WriteLine("graphic location: " + location + " node name: " + graph.Vertices[nodeNumber].Name);
                 graphics.DrawEllipse(pen, location.X - 5, location.Y - 5, 10, 10);
 
                 label.Location = GetNewXAndY(location);
+                Console.WriteLine("label location: " + location + " label name: " + label.Text);
+
                 label.Font = new Font("Arial", 8);
                 label.Size = new Size(20, 15);
                 label.ForeColor = Color.White;
+                label.BackColor = Color.Black;
+                label.Visible = true;
                 label.SendToBack();
                 label.Refresh();
 
@@ -135,38 +177,37 @@ namespace GraphsClassProjectTakeTwo
                 panelGraph.Controls.Add(label);
                 label.Refresh();
             }
+            panelGraph.Refresh();
         }
-            private Point GetNewXAndY(Point location)
-            {
-                int xCoord;
-                int yCoord;
+        private Point GetNewXAndY(Point location)
+        {
+            int xCoord;
+            int yCoord;
 
-                if (location.X >= 200)
-                    xCoord = location.X + 10;
-                else
-                    xCoord = location.X - 15;
-                if (location.Y >= 200)
-                    yCoord = location.Y + 15;
-                else
-                    yCoord = location.Y - 15;
-                return new Point(xCoord, yCoord);
-            }
+            if (location.X >= 200)
+                xCoord = Math.Min(location.X + 10, panelGraph.Width);
+            else
+                xCoord = Math.Max(location.X - 15, 0);
+            if (location.Y >= 200)
+                yCoord = Math.Min(location.Y + 15, panelGraph.Height);
+            else
+                yCoord = Math.Max(location.Y - 15, 0);
+            return new Point(xCoord, yCoord);
+        }
 
-
-        private void CreateGraphics(Graph graph)
+        private void CreateLinesBetweenNodes(Graph graph) 
         {
             SetUpGraphicsAndPen(out Graphics graphics, out Pen pen, Color.Black);
 
             foreach (Edge edge in graph.Edges)
             {
                 pen.Color = Color.Black;
+                pen.Width = 3;
 
                 Point initialLocation = new Point((int)edge.Start.XCoord, (int)edge.Start.YCoord);
                 Point terminalLocation = new Point((int)edge.End.XCoord, (int)edge.End.YCoord);
                 graphics.DrawLine(pen, initialLocation, terminalLocation);
             }
-
-            panelGraph.Refresh();
         }
 
         private void SetUpGraphicsAndPen(out Graphics graphics, out Pen pen, Color penColor)
@@ -176,67 +217,5 @@ namespace GraphsClassProjectTakeTwo
             AdjustableArrowCap adjustableArrowCap = new AdjustableArrowCap(3, 3);
             pen.CustomEndCap = adjustableArrowCap;
         }
-
-        /*
-                private void FillPanel(ParentGraph graph)
-                {
-                    ResetPanels();
-
-                    CreateLabelType(graph);
-
-                    CreateLabelNodes(graph);
-
-                    CreateGraphics(graph);
-                }
-
-                 private void ResetPanels()
-                {
-                    LabelNodes = new List<Label>();
-                    NodeCircleLocations = new List<Point>();
-                    panelGraph.Controls.Clear();
-                    panelGraph.Refresh();
-                    ResetNodeSelectionPanel();
-                }
-
-                private void ResetNodeSelectionPanel()
-                {
-                    panelNodeSelection.Visible = false;
-                    originDropDown.SelectedIndex = -1;
-                    destDropDown.SelectedIndex = -1;
-                    originDropDown.Items.Clear();
-                    destDropDown.Items.Clear();
-                    originDropDown.ResetText();
-                    destDropDown.ResetText();
-                }
-
-          private void CreateLabelType(ParentGraph graph)
-        {
-            Label labelGraphType = new Label();
-            labelGraphType.Location = new Point(15, 20);
-
-            String type = "";
-            switch (graph.Type)
-            {
-                case GraphType.WEIGHTED_DIGRAPH:
-                    type = "Weighted Digraph";
-                    break;
-                case GraphType.DIGRAPH:
-                    type = "Digraph";
-                    break;
-                case GraphType.WEIGHTED_GRAPH:
-                    type = "Weighted Graph";
-                    break;
-                case GraphType.GRAPH:
-                    type = "Graph";
-                    break;
-            }
-
-            labelGraphType.Text = type;
-            labelGraphType.Refresh();
-            panelGraph.Controls.Add(labelGraphType);
-        }
-
-
-        */
     }
 }
