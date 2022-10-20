@@ -11,12 +11,16 @@ namespace GraphsClassProjectTakeTwo
         public String Name { get; set; }
         public List<Edge> Edges { get; set; }
         public int Indegree { get; set; }
+        public double XCoord { get; set; }
+        public double YCoord { get; set; }
 
-        public Vertex(String nm)
+        public Vertex(String nm, double xCoord, double yCoord)
         {
             Name = nm;
             Indegree = 0;
             Edges = new List<Edge>();
+            XCoord = xCoord;
+            YCoord = yCoord;
         }
 
         public void AddEdge(Vertex source, double weight)

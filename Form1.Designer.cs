@@ -1,6 +1,6 @@
 ﻿namespace GraphsClassProjectTakeTwo
 {
-    partial class Form1
+    partial class GraphProject
     {
         /// <summary>
         /// Required designer variable.
@@ -28,13 +28,43 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.panelGraphButtons = new System.Windows.Forms.Panel();
+            this.panelGraph = new System.Windows.Forms.Panel();
+            this.SuspendLayout();
+            // 
+            // panelGraphButtons
+            // 
+            this.panelGraphButtons.AutoScroll = true;
+            this.panelGraphButtons.Location = new System.Drawing.Point(634, 12);
+            this.panelGraphButtons.Name = "panelGraphButtons";
+            this.panelGraphButtons.Size = new System.Drawing.Size(160, 330);
+            this.panelGraphButtons.TabIndex = 0;
+            // 
+            // panelGraph
+            // 
+            this.panelGraph.Location = new System.Drawing.Point(12, 12);
+            this.panelGraph.Name = "panelGraph";
+            this.panelGraph.Size = new System.Drawing.Size(600, 600);
+            this.panelGraph.TabIndex = 0;
+            // 
+            // GraphProject
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form1";
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(795, 621);
+            this.Controls.Add(this.panelGraph);
+            this.Controls.Add(this.panelGraphButtons);
+            this.Name = "GraphProject";
+            this.Text = "Graph Project";
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Panel panelGraphButtons;
+        private System.Windows.Forms.Panel panelGraph;
     }
 }
 

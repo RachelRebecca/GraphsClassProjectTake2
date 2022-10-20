@@ -56,7 +56,7 @@ GO
 CREATE TABLE [dbo].[Edges]
 (
 [Edge_ID][int]IDENTITY(1,1) NOT NULL,
-[Weight][int] NOT NULL,
+[Weight][float] NOT NULL,
 CONSTRAINT [PK_Edges] PRIMARY KEY CLUSTERED ([Edge_ID]),
 [Graph_ID] [int] NULL FOREIGN KEY REFERENCES [Graphs](Graph_ID),
 [InitialNode_ID] [int] NULL FOREIGN KEY REFERENCES [Nodes](Node_ID),

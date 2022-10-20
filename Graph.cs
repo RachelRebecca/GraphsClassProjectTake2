@@ -13,15 +13,15 @@ namespace GraphsClassProjectTakeTwo
     internal class Graph
     {
         // fields
-        private String Name { get; set; }
+        public String Name { get; set; }
 
-        private bool IsWeighted { get; set; }
+        public bool IsWeighted { get; set; }
 
-        private bool IsDirected { get; set; }
+        public bool IsDirected { get; set; }
 
-        private List<Vertex> Vertices { get; set; }
+        public List<Vertex> Vertices { get; set; }
 
-        private List<Edge> Edges { get; set; } // TODO: only edge list?
+        public List<Edge> Edges { get; set; } // TODO: only edge list?
 
         // constructor
         public Graph(String name, SqlConnection sqlCon)
@@ -34,7 +34,7 @@ namespace GraphsClassProjectTakeTwo
 
 
         // methods
-        public bool LoadGraph(SqlConnection sqlCon) // TODO: convert to GraphType
+        public bool LoadGraph(SqlConnection sqlCon)
         {
             bool retVal = true;
             try
@@ -43,11 +43,16 @@ namespace GraphsClassProjectTakeTwo
                 SqlCommand getGraphType = new SqlCommand("spGetGraphFlags", sqlCon);
                 SqlCommand getEdgesForGraph = new SqlCommand("spGetEdges", sqlCon);
 
-                SqlParameter sqlParameter = new SqlParameter();
-                sqlParameter.ParameterName = "@GraphName";
-                sqlParameter.Value = this.Name;
-                getGraphType.Parameters.Add(sqlParameter);
-                getEdgesForGraph.Parameters.Add(sqlParameter);
+                SqlParameter sqlParameter1 = new SqlParameter();
+                sqlParameter1.ParameterName = "@GraphName";
+                sqlParameter1.Value = this.Name;
+
+                SqlParameter sqlParameter2 = new SqlParameter();
+                sqlParameter2.ParameterName = "@GraphName";
+                sqlParameter2.Value = this.Name;
+
+                getGraphType.Parameters.Add(sqlParameter1);
+                getEdgesForGraph.Parameters.Add(sqlParameter2);
 
                 getGraphType.CommandType = CommandType.StoredProcedure;
                 getGraphType.ExecuteNonQuery();
@@ -56,8 +61,8 @@ namespace GraphsClassProjectTakeTwo
                 da1.Fill(dataSet1, "Flags");
 
                 // if it's "1", then it's true otherwise it's false
-                this.IsWeighted = (String)dataSet1.Tables["Flags"].Rows[0].ItemArray[0] == "1";
-                this.IsDirected = (String)dataSet1.Tables["Flags"].Rows[0].ItemArray[1] == "1";
+                this.IsWeighted = (bool)dataSet1.Tables["Flags"].Rows[0].ItemArray[0];
+                this.IsDirected = (bool)dataSet1.Tables["Flags"].Rows[0].ItemArray[1];
 
                 getEdgesForGraph.CommandType = CommandType.StoredProcedure;
                 getEdgesForGraph.ExecuteNonQuery();
@@ -71,30 +76,42 @@ namespace GraphsClassProjectTakeTwo
                 for (int row = 0; row < nrEdges; ++row)
                 {
                     String initialNode = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[0];
-                    String initialNodeX = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[1];
-                    String initialNodeY = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[2];
                     String terminalNode = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[3];
-                    String terminalNodeX = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[4];
-                    String terminalNodeY = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[5];
 
                     // TODO: store initialNodeX, initialNodeY, terminalNodeX, terminalNodeY somewhere
 
                     double weight;
                     try
                     {
-                        weight = Double.Parse((String)dataSet2.Tables["Edges"].Rows[row].ItemArray[6]);
+                        weight = (double)dataSet2.Tables["Edges"].Rows[row].ItemArray[6];
                     }
                     catch (Exception e)
                     {
-                        throw new Exception("Invalid weight in row " + row);
+                        throw new Exception("Invalid weight in row " + row + ". Weight = " + dataSet2.Tables["Edges"].Rows[row].ItemArray[6]);
                     }
+
+                    double ix, iy, tx, ty;
+
+                    try
+                    {
+                        ix = (double)dataSet2.Tables["Edges"].Rows[row].ItemArray[1];
+                        iy = (double)dataSet2.Tables["Edges"].Rows[row].ItemArray[2];
+                        tx = (double)dataSet2.Tables["Edges"].Rows[row].ItemArray[4];
+                        ty = (double)dataSet2.Tables["Edges"].Rows[row].ItemArray[5];
+
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Invalid location given in row " + row);
+                    }
+
 
                     int initialIndex = Vertices.FindIndex(item => initialNode.Equals(item.Name));
                     int terminalIndex = Vertices.FindIndex(item => terminalNode.Equals(item.Name));
 
-                    Vertex initial = initialIndex < 0 ? new Vertex(initialNode)
+                    Vertex initial = initialIndex < 0 ? new Vertex(initialNode, ix, iy)
                                                     : Vertices[initialIndex];
-                    Vertex terminal = terminalIndex < 0 ? new Vertex(terminalNode)
+                    Vertex terminal = terminalIndex < 0 ? new Vertex(terminalNode, tx, ty)
                                                     : Vertices[terminalIndex];
 
 
@@ -167,7 +184,7 @@ namespace GraphsClassProjectTakeTwo
 
                 currNode = GetNewCurrNode(vertexAndStruct, currNode);
 
-                path = UpdatePath(path, source, vertexAndStruct, currNode); 
+                path = UpdatePath(path, source, vertexAndStruct, currNode);
 
                 shortestDistance = currNode.DistanceFromStart;
 
