@@ -96,6 +96,10 @@ namespace GraphsClassProjectTakeTwo
         {
             panelGraph.Controls.Clear();
 
+            panelGraph.Refresh();
+
+            panelGraph.BackColor = Color.Gray;
+
             Button button = (Button)sender;
 
             Graph graph = new Graph(button.Name, sqlCon);
@@ -107,8 +111,8 @@ namespace GraphsClassProjectTakeTwo
         private void ShowGraph(Graph graph)
         {
             CreateLabelType(graph);
-            CreateLabelNodes(graph);
-            CreateGraphics(graph);
+            CreateLabelsAndNodes(graph);
+            CreateLinesBetweenNodes(graph);
         }
 
         private void CreateLabelType(Graph graph)
@@ -164,7 +168,6 @@ namespace GraphsClassProjectTakeTwo
                 label.Font = new Font("Arial", 8);
                 label.Size = new Size(20, 15);
                 label.ForeColor = Color.White;
-                label.BackColor = Color.Black;
                 label.Visible = true;
                 label.SendToBack();
                 label.Refresh();
@@ -177,7 +180,6 @@ namespace GraphsClassProjectTakeTwo
                 panelGraph.Controls.Add(label);
                 label.Refresh();
             }
-            panelGraph.Refresh();
         }
         private Point GetNewXAndY(Point location)
         {
@@ -202,11 +204,15 @@ namespace GraphsClassProjectTakeTwo
             foreach (Edge edge in graph.Edges)
             {
                 pen.Color = Color.Black;
-                pen.Width = 3;
 
-                Point initialLocation = new Point((int)edge.Start.XCoord, (int)edge.Start.YCoord);
-                Point terminalLocation = new Point((int)edge.End.XCoord, (int)edge.End.YCoord);
+                Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
+                Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
                 graphics.DrawLine(pen, initialLocation, terminalLocation);
+
+                if (!graph.IsDirected)
+                {
+                    graphics.DrawLine(pen, terminalLocation, initialLocation);
+                }
             }
         }
 

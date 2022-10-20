@@ -42,6 +42,7 @@
             // 
             // panelGraph
             // 
+            this.panelGraph.BackColor = System.Drawing.Color.Gray;
             this.panelGraph.Location = new System.Drawing.Point(12, 12);
             this.panelGraph.Name = "panelGraph";
             this.panelGraph.Size = new System.Drawing.Size(600, 600);
@@ -52,6 +53,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(795, 621);
             this.Controls.Add(this.panelGraph);
             this.Controls.Add(this.panelGraphButtons);
