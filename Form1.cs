@@ -108,8 +108,16 @@ namespace GraphsClassProjectTakeTwo
 
             CurrentGraph = graph;
 
+            CurrentAlgorithm = AlgorithmType.NONE;
+
             ShowGraph(graph);
 
+            ShowWeights(graph);
+
+        }
+
+        private void ShowWeights(Graph graph)
+        {
         }
 
         private void ShowGraph(Graph graph)

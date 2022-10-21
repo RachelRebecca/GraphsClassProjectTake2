@@ -35,6 +35,8 @@
             this.Dijkstra = new System.Windows.Forms.Button();
             this.Kruskal = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tableWeights = new System.Windows.Forms.TableLayoutPanel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelGraphButtons
@@ -96,10 +98,24 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.tableWeights);
             this.panel1.Location = new System.Drawing.Point(634, 358);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(160, 251);
             this.panel1.TabIndex = 3;
+            // 
+            // tableWeights
+            // 
+            this.tableWeights.ColumnCount = 2;
+            this.tableWeights.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableWeights.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableWeights.Location = new System.Drawing.Point(0, 0);
+            this.tableWeights.Name = "tableWeights";
+            this.tableWeights.RowCount = 2;
+            this.tableWeights.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableWeights.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableWeights.Size = new System.Drawing.Size(159, 250);
+            this.tableWeights.TabIndex = 0;
             // 
             // GraphProject
             // 
@@ -117,6 +133,7 @@
             this.Controls.Add(this.Kruskal);
             this.Name = "GraphProject";
             this.Text = "Graph Project";
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -130,6 +147,7 @@
         private System.Windows.Forms.Button Dijkstra;
         private System.Windows.Forms.Button Kruskal;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TableLayoutPanel tableWeights;
     }
 }
 
