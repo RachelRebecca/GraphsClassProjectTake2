@@ -34,6 +34,7 @@
             this.Prim = new System.Windows.Forms.Button();
             this.Dijkstra = new System.Windows.Forms.Button();
             this.Kruskal = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // panelGraphButtons
@@ -92,6 +93,14 @@
             this.Kruskal.UseVisualStyleBackColor = true;
             this.Kruskal.Click += new System.EventHandler(this.Kruskal_Click);
             // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.Location = new System.Drawing.Point(634, 358);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(160, 251);
+            this.panel1.TabIndex = 3;
+            // 
             // GraphProject
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -99,6 +108,7 @@
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(795, 621);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.panelGraph);
             this.Controls.Add(this.panelGraphButtons);
             this.Controls.Add(this.Topological);
@@ -119,6 +129,7 @@
         private System.Windows.Forms.Button Prim;
         private System.Windows.Forms.Button Dijkstra;
         private System.Windows.Forms.Button Kruskal;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 
