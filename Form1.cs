@@ -233,6 +233,8 @@ namespace GraphsClassProjectTakeTwo
 
         private void Kruskal_Click(object sender, EventArgs e)
         {
+            CurrentAlgorithm = AlgorithmType.KRUSKAL;
+
             if (CurrentGraph == null)
             {
                 MessageBox.Show("There is no graph showing yet.");
@@ -240,8 +242,6 @@ namespace GraphsClassProjectTakeTwo
             else if (CurrentGraph.IsWeighted && !CurrentGraph.IsDirected)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
-
-                CurrentAlgorithm = AlgorithmType.KRUSKAL;
 
                 try
                 {
@@ -264,6 +264,8 @@ namespace GraphsClassProjectTakeTwo
 
         private void Topological_Click(object sender, EventArgs e)
         {
+            CurrentAlgorithm = AlgorithmType.TOPOLOGICAL;
+
             if (CurrentGraph == null)
             {
                 MessageBox.Show("There is no graph showing yet.");
@@ -277,8 +279,6 @@ namespace GraphsClassProjectTakeTwo
             else
             {
                 CreateLinesBetweenNodes(CurrentGraph);
-
-                CurrentAlgorithm = AlgorithmType.TOPOLOGICAL;
 
                 string topologicalOutput = "";
 
@@ -304,6 +304,8 @@ namespace GraphsClassProjectTakeTwo
 
         private void Prim_Click(object sender, EventArgs e)
         {
+            CurrentAlgorithm = AlgorithmType.PRIM;
+
             if (CurrentGraph == null)
             {
                 MessageBox.Show("There is no graph showing yet.");
@@ -312,9 +314,7 @@ namespace GraphsClassProjectTakeTwo
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
-                CurrentAlgorithm = AlgorithmType.PRIM;
-
-                MessageBox.Show("Click on the label near the node you want to use for the algorithm");
+                MessageBox.Show("Click on the label near the node that you want to use for the algorithm");
             }
             else
             {
@@ -326,6 +326,8 @@ namespace GraphsClassProjectTakeTwo
 
         private void Dijkstra_Click(object sender, EventArgs e)
         {
+            CurrentAlgorithm = AlgorithmType.DIJKSTRA;
+
             SelectedDijkstraNodes = new List<Vertex>();
 
             if (CurrentGraph == null)
@@ -342,9 +344,7 @@ namespace GraphsClassProjectTakeTwo
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
-                CurrentAlgorithm = AlgorithmType.DIJKSTRA;
-
-                MessageBox.Show("Click on the label near the starting node and the label near the ending node that you want to use for the algorithm");
+                MessageBox.Show("Click on the label near the starting node that you want to use for the algorithm");
 
             }
         }
@@ -398,7 +398,7 @@ namespace GraphsClassProjectTakeTwo
 
                         SelectedDijkstraNodes.Add(start);
 
-                        MessageBox.Show("You chose " + label.Text + " as your starting node");
+                        MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node you want to use for the algorithm");
                     }
                     else
                     {
