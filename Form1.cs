@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace GraphsClassProjectTakeTwo
 {
@@ -21,6 +17,12 @@ namespace GraphsClassProjectTakeTwo
         public List<String> GraphNames { get; set; } // Stored Procedure needs to split into two : one for names, and one that returns flags for each name
 
         public List<Button> GraphNameButtons { get; set; }
+
+        private Graph CurrentGraph = null;
+
+        private AlgorithmType CurrentAlgorithm = AlgorithmType.NONE;
+
+        private List<Vertex> SelectedDijkstraNodes = new List<Vertex>();
 
         public GraphProject()
         {
@@ -104,6 +106,8 @@ namespace GraphsClassProjectTakeTwo
 
             Graph graph = new Graph(button.Name, sqlCon);
 
+            CurrentGraph = graph;
+
             ShowGraph(graph);
 
         }
@@ -139,7 +143,7 @@ namespace GraphsClassProjectTakeTwo
                     type += "Graph";
                     break;
             }
-      
+
             labelGraphType.Text = type;
             labelGraphType.BringToFront();
             labelGraphType.Refresh();
@@ -169,6 +173,7 @@ namespace GraphsClassProjectTakeTwo
                 label.Size = new Size(20, 15);
                 label.ForeColor = Color.White;
                 label.Visible = true;
+                label.Click += new EventHandler(Label_Click); ;
                 label.SendToBack();
                 label.Refresh();
 
@@ -181,6 +186,7 @@ namespace GraphsClassProjectTakeTwo
                 label.Refresh();
             }
         }
+
         private Point GetNewXAndY(Point location)
         {
             int xCoord;
@@ -197,7 +203,7 @@ namespace GraphsClassProjectTakeTwo
             return new Point(xCoord, yCoord);
         }
 
-        private void CreateLinesBetweenNodes(Graph graph) 
+        private void CreateLinesBetweenNodes(Graph graph)
         {
             SetUpGraphicsAndPen(out Graphics graphics, out Pen pen, Color.Black);
 
@@ -222,6 +228,264 @@ namespace GraphsClassProjectTakeTwo
             pen = new Pen(penColor);
             AdjustableArrowCap adjustableArrowCap = new AdjustableArrowCap(3, 3);
             pen.CustomEndCap = adjustableArrowCap;
+        }
+
+
+        private void Kruskal_Click(object sender, EventArgs e)
+        {
+            if (CurrentGraph == null)
+            {
+                MessageBox.Show("There is no graph showing yet.");
+            }
+            else if (CurrentGraph.IsWeighted && !CurrentGraph.IsDirected)
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                CurrentAlgorithm = AlgorithmType.KRUSKAL;
+
+                try
+                {
+                    List<Edge> edges = CurrentGraph.Kruskal();
+                    // draw minimum spanning graph edges in red
+                    DrawRedLines(edges);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show(exception.Message);
+                }
+            }
+            else
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                MessageBox.Show("Kruskal's Algorithm is not available for selected graph.");
+            }
+        }
+
+        private void Topological_Click(object sender, EventArgs e)
+        {
+            if (CurrentGraph == null)
+            {
+                MessageBox.Show("There is no graph showing yet.");
+            }
+            else if (!CurrentGraph.IsDirected)
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                MessageBox.Show("Topological Sort is not available for selected graph.");
+            }
+            else
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                CurrentAlgorithm = AlgorithmType.TOPOLOGICAL;
+
+                string topologicalOutput = "";
+
+                try
+                {
+                    List<Vertex> output = CurrentGraph.TopologicalSort();
+
+
+                    foreach (Vertex vertex in output)
+                    {
+                        topologicalOutput += vertex.Name + " ";
+                    }
+                }
+                catch (Exception exception)
+                {
+                    topologicalOutput = exception.Message;
+                }
+
+                MessageBox.Show("Topological sort of " + CurrentGraph.Name + ":\n\n" + topologicalOutput);
+
+            }
+        }
+
+        private void Prim_Click(object sender, EventArgs e)
+        {
+            if (CurrentGraph == null)
+            {
+                MessageBox.Show("There is no graph showing yet.");
+            }
+            else if (CurrentGraph.IsWeighted && !CurrentGraph.IsDirected)
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                CurrentAlgorithm = AlgorithmType.PRIM;
+
+                MessageBox.Show("Click on the label near the node you want to use for the algorithm");
+            }
+            else
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                MessageBox.Show("Prim's Algorithm is not available for selected graph.");
+            }
+        }
+
+        private void Dijkstra_Click(object sender, EventArgs e)
+        {
+            SelectedDijkstraNodes = new List<Vertex>();
+
+            if (CurrentGraph == null)
+            {
+                MessageBox.Show("There is no graph showing yet.");
+            }
+            else if (!CurrentGraph.IsWeighted)
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                MessageBox.Show("Dijkstra's Algorithm is not available for selected graph.");
+            }
+            else
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                CurrentAlgorithm = AlgorithmType.DIJKSTRA;
+
+                MessageBox.Show("Click on the label near the starting node and the label near the ending node that you want to use for the algorithm");
+
+            }
+        }
+
+        private void Label_Click(object sender, EventArgs e)
+        {
+            Label label = (Label)sender;
+            if (CurrentAlgorithm == AlgorithmType.NONE || CurrentAlgorithm == AlgorithmType.TOPOLOGICAL || CurrentAlgorithm == AlgorithmType.KRUSKAL)
+            {
+                // do nothing
+            }
+
+            else if (CurrentAlgorithm == AlgorithmType.PRIM)
+            {
+                int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                if (initialIndex < 0)
+                {
+                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                }
+                else
+                {
+                    Vertex start = CurrentGraph.Vertices[initialIndex];
+
+                    try
+                    {
+                        List<Edge> output = CurrentGraph.Prim(start);
+
+                        // draw minimum spanning graph edges in red
+                        DrawRedLines(output);
+                    } catch (Exception exception)
+                    {
+                        MessageBox.Show(exception.Message);
+                    }
+                }
+
+            }
+            else if (CurrentAlgorithm == AlgorithmType.DIJKSTRA)
+            {
+                if (SelectedDijkstraNodes.Count == 0)
+                {
+                    // you haven't yet selected a node
+
+                    int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                    if (initialIndex >= 0)
+                    {
+                        Vertex start = CurrentGraph.Vertices[initialIndex];
+
+                        SelectedDijkstraNodes.Add(start);
+
+                        MessageBox.Show("You chose " + label.Text + " as your starting node");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                    }
+
+                }
+                else if (SelectedDijkstraNodes.Count == 1)
+                {
+                    // you have already selected the starting node
+
+                    int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                    if (terminalIndex >= 0)
+                    {
+                        Vertex end = CurrentGraph.Vertices[terminalIndex];
+
+                        SelectedDijkstraNodes.Add(end);
+
+                        try
+                        {
+                            List<Vertex> output = CurrentGraph.Dijkstra(SelectedDijkstraNodes[0], end, out double shortestDistance);
+
+                            // Draw path one by one using red lines
+                            DrawRedLines(output, 500);
+
+                            MessageBox.Show("Shortest distance: " + shortestDistance);
+                        }
+                        catch (Exception exception)
+                        {
+                            MessageBox.Show(exception.Message);
+                        }
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                    }
+
+                }
+                else
+                {
+                    // do nothing, we only care about the starting and ending node
+                }
+
+            }
+
+            //CurrentAlgorithm = AlgorithmType.NONE;
+
+        }
+
+        private void DrawRedLines(List<Edge> input)
+        {
+            SetUpGraphicsAndPen(out Graphics graphics, out Pen pen, Color.Red);
+
+            foreach (Edge edge in input)
+            {
+                Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
+                Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
+                graphics.DrawLine(pen, initialLocation, terminalLocation);
+                if (!CurrentGraph.IsDirected)
+                {
+                    graphics.DrawLine(pen, terminalLocation, initialLocation);
+                }
+            }
+        }
+        private void DrawRedLines(List<Vertex> input, int sleepTime)
+        {
+            SetUpGraphicsAndPen(out Graphics graphics, out Pen pen, Color.Red);
+
+            Vertex startingVertex, endingVertex;
+
+            for (int i = 0; i < input.Count - 1; i++)
+            {
+                startingVertex = input[i];
+                endingVertex = input[i + 1];
+
+                Point initialLocation = new Point((int)(startingVertex.XCoord * panelGraph.Width), (int)(startingVertex.YCoord * panelGraph.Height));
+                Point terminalLocation = new Point((int)(endingVertex.XCoord * panelGraph.Width), (int)(endingVertex.YCoord * panelGraph.Height));
+                graphics.DrawLine(pen, initialLocation, terminalLocation);
+
+                if (!CurrentGraph.IsDirected)
+                {
+                    graphics.DrawLine(pen, terminalLocation, initialLocation);
+                }
+
+                System.Threading.Thread.Sleep(sleepTime);
+            }
+
         }
     }
 }
