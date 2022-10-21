@@ -388,6 +388,8 @@ namespace GraphsClassProjectTakeTwo
                 {
                     // you haven't yet selected a node
 
+                    CreateLinesBetweenNodes(CurrentGraph);
+
                     int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
 
                     if (initialIndex >= 0)
@@ -429,6 +431,8 @@ namespace GraphsClassProjectTakeTwo
                         {
                             MessageBox.Show(exception.Message);
                         }
+
+                        SelectedDijkstraNodes = new List<Vertex>();
 
                     }
                     else
