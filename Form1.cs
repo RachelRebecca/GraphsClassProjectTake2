@@ -130,7 +130,6 @@ namespace GraphsClassProjectTakeTwo
             }
 
             tableEdgesWeights.DataSource = table;
-
         }
 
         private void ShowGraph(Graph graph)
@@ -166,7 +165,7 @@ namespace GraphsClassProjectTakeTwo
             }
 
             labelGraphType.Text = type;
-            labelGraphType.BringToFront();
+            labelGraphType.Size = new Size(150, 15);
             labelGraphType.Refresh();
             panelGraph.Controls.Add(labelGraphType);
         }
