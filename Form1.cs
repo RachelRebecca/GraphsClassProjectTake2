@@ -212,8 +212,6 @@ namespace GraphsClassProjectTakeTwo
                 graphics.DrawEllipse(pen, location.X - 5, location.Y - 5, 10, 10);
 
                 label.Location = GetNewXAndY(location);
-                Console.WriteLine("label location: " + location + " label name: " + label.Text);
-
                 label.Font = new Font("Arial", 8);
                 label.Size = new Size(20, 15);
                 label.ForeColor = Color.White;
@@ -465,6 +463,15 @@ namespace GraphsClassProjectTakeTwo
 
                 Point initialLocation = new Point((int)(startingVertex.XCoord * panelGraph.Width), (int)(startingVertex.YCoord * panelGraph.Height));
                 Point terminalLocation = new Point((int)(endingVertex.XCoord * panelGraph.Width), (int)(endingVertex.YCoord * panelGraph.Height));
+                input.ForEach(e => Console.WriteLine(e.Name));
+                Console.WriteLine("Start: " + startingVertex.Name + " End: " + endingVertex.Name);
+                
+               /*
+                Edge edge = CurrentGraph.Edges.Find(e => (e.Start.Equals(startingVertex) && e.End.Equals(endingVertex)) ||
+                                                                    (e.Start.Equals(endingVertex) && e.End.Equals(startingVertex)));
+                Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
+                Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
+                */
                 graphics.DrawLine(pen, initialLocation, terminalLocation);
 
                 System.Threading.Thread.Sleep(sleepTime);
