@@ -244,7 +244,7 @@ namespace GraphsClassProjectTakeTwo
             {
                 MessageBox.Show("There is no graph showing yet.");
             }
-            else if (CurrentGraph.IsWeighted && !CurrentGraph.IsDirected)
+            else if (!CurrentGraph.IsDirected)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
@@ -315,7 +315,7 @@ namespace GraphsClassProjectTakeTwo
             {
                 MessageBox.Show("There is no graph showing yet.");
             }
-            else if (CurrentGraph.IsWeighted && !CurrentGraph.IsDirected)
+            else if (!CurrentGraph.IsDirected)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
@@ -327,6 +327,7 @@ namespace GraphsClassProjectTakeTwo
 
                 MessageBox.Show("Prim's Algorithm is not available for selected graph.");
             }
+
         }
 
         private void Dijkstra_Click(object sender, EventArgs e)

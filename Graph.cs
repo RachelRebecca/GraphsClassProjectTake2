@@ -158,9 +158,12 @@ namespace GraphsClassProjectTakeTwo
             return retVal;
         }
 
-        // todo: add an out parameter to return the sum of the weights of the total path
         public List<Vertex> Dijkstra(Vertex source, Vertex target, out double shortestDistance)
         {
+
+            // Has to be weighted (directed or undirected)
+            if (!this.IsWeighted) throw new Exception("forbidden algorithm attempt");
+
             List<Vertex> path = new List<Vertex>();
 
             if (source.Equals(target))
@@ -291,6 +294,9 @@ namespace GraphsClassProjectTakeTwo
 
         public List<Edge> Kruskal()
         {
+            // Has to be a graph (weighted or unweighted)
+            if (this.IsDirected) throw new Exception("forbidden algorithm attempt");
+
             List<Edge> shortestPath = new List<Edge>();
 
             List<Edge> orderedEdges = Edges.OrderBy((w) => w.Weight).ToList();
@@ -363,8 +369,8 @@ namespace GraphsClassProjectTakeTwo
 
         public List<Edge> Prim(Vertex start)
         {
-            // Has to a weighted graph 
-            if (!this.IsWeighted || this.IsDirected) throw new Exception("forbidden algorithm attempt");
+            // Has to be a graph (weighted or unweighted)
+            if (this.IsDirected) throw new Exception("forbidden algorithm attempt");
 
             Edge[] edges = new Edge[Vertices.Count - 1];
             List<PrimStruct> prims = new List<PrimStruct>();
@@ -448,7 +454,7 @@ namespace GraphsClassProjectTakeTwo
 
         public List<Vertex> TopologicalSort()
         {
-            // backup in case the button isn't properly disabled
+            // Has to be a digraph (weighted or unweighted)
             if (!this.IsDirected) throw new Exception("forbidden algorithm attempt");
 
             List<Vertex> sorted = new List<Vertex>();
@@ -462,7 +468,9 @@ namespace GraphsClassProjectTakeTwo
             List<Vertex> terminalVertices = new List<Vertex>();
             foreach (Vertex vertex in this.Vertices)
             {
-                foreach (Edge edge in vertex.Edges)
+                var currentEdges = Edges.Where(e => (e.Start.Equals(vertex) || e.End.Equals(vertex)));
+
+                foreach (Edge edge in currentEdges)
                 {
                     if (edge.Start.Equals(vertex))
                     {
