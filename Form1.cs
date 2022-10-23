@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace GraphsClassProjectTakeTwo
 {
@@ -365,6 +364,8 @@ namespace GraphsClassProjectTakeTwo
 
             else if (CurrentAlgorithm == AlgorithmType.PRIM)
             {
+                CreateLinesBetweenNodes(CurrentGraph);
+
                 int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
 
                 if (initialIndex < 0)
@@ -385,6 +386,7 @@ namespace GraphsClassProjectTakeTwo
                     catch (Exception exception)
                     {
                         MessageBox.Show(exception.Message);
+                        Console.WriteLine(exception.StackTrace);
                     }
                 }
 
@@ -454,8 +456,6 @@ namespace GraphsClassProjectTakeTwo
                 }
 
             }
-
-            //CurrentAlgorithm = AlgorithmType.NONE;
 
         }
 

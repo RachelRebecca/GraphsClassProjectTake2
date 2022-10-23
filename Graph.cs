@@ -116,9 +116,13 @@ namespace GraphsClassProjectTakeTwo
 
 
                     Edge newEdge = new Edge(initial, terminal, weight); // weight = 1 for unweighted and database weights for weighted
-
-
                     Edges.Add(newEdge);
+
+                    /*if (!IsDirected)
+                    {
+                        Edge newEdge2 = new Edge(terminal, initial, weight); // weight = 1 for unweighted and database weights for weighted
+                        Edges.Add(newEdge2);
+                    }*/
 
                     if (initialIndex < 0 && terminalIndex < 0)
                     {
@@ -147,7 +151,6 @@ namespace GraphsClassProjectTakeTwo
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.GetBaseException());
                 Console.WriteLine(e.StackTrace);
                 retVal = false;
             }
@@ -290,28 +293,6 @@ namespace GraphsClassProjectTakeTwo
         {
             List<Edge> shortestPath = new List<Edge>();
 
-            // TODO: Is this an accurate sort??
-            /* Possible alternative:
-             private List<EdgeStruct> SortEdges()
-              {
-             List<EdgeStruct> Sorted = new List<EdgeStruct>();
-             foreach (EdgeStruct AddingEdge in Edges)
-             {
-                 foreach (EdgeStruct SortedEdge in Sorted)
-                 {
-                     if (AddingEdge.weight < SortedEdge.weight)
-                     {
-                         Sorted.Add(AddingEdge);
-                     }
-                 }
-                 if (!(Sorted[Sorted.Count - 1]).Equals(AddingEdge))
-                 {
-                     Sorted.Add(AddingEdge);
-                 }
-             }
-             return Sorted;
-             }
-             */
             List<Edge> orderedEdges = Edges.OrderBy((w) => w.Weight).ToList();
 
             List<List<Vertex>> visited = new List<List<Vertex>>();
@@ -392,8 +373,10 @@ namespace GraphsClassProjectTakeTwo
 
             foundVertices.Add(start);
 
+            var startEdges = Edges.Where(e => (e.Start.Equals(start) || e.End.Equals(start)));
+
             // add prims for all neighbors of start
-            foreach (Edge edge in start.Edges)
+            foreach (Edge edge in startEdges)
             {
                 Vertex neighbor = edge.Start.Equals(start) ? edge.End : edge.Start;
                 if (!foundVertices.Contains(neighbor))
@@ -417,10 +400,13 @@ namespace GraphsClassProjectTakeTwo
                 foundVertices.Add(currentPrim.vertex);
                 numEdgesFound++;
 
-                foreach (Edge edge in currentPrim.vertex.Edges)
-                {
-                    Vertex neighbor = edge.Start.Equals(start) ? edge.End : edge.Start;
 
+                var currentEdges = Edges.Where(e => (e.Start.Equals(currentPrim.vertex) || e.End.Equals(currentPrim.vertex)));
+           
+
+                foreach (Edge edge in currentEdges)
+                {
+                    Vertex neighbor = edge.Start.Equals(currentPrim.vertex) ? edge.End : edge.Start;
                     if (!foundVertices.Contains(neighbor))
                     {
                         PrimStruct neighborPrim = prims.Find(p => p.vertex.Equals(neighbor));
