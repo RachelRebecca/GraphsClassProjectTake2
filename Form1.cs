@@ -225,7 +225,7 @@ namespace GraphsClassProjectTakeTwo
 
         private void CreateLinesBetweenNodes(Graph graph)
         {
-            SetUpGraphicsAndPen(out Graphics graphics, out Pen pen, Color.Black);
+            SetUpGraphicsAndPen(graph.IsDirected, out Graphics graphics, out Pen pen, Color.Black);
 
             foreach (Edge edge in graph.Edges)
             {
@@ -234,22 +234,8 @@ namespace GraphsClassProjectTakeTwo
                 Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
                 Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
                 graphics.DrawLine(pen, initialLocation, terminalLocation);
-
-                if (!graph.IsDirected)
-                {
-                    graphics.DrawLine(pen, terminalLocation, initialLocation);
-                }
             }
         }
-
-        private void SetUpGraphicsAndPen(out Graphics graphics, out Pen pen, Color penColor)
-        {
-            graphics = panelGraph.CreateGraphics();
-            pen = new Pen(penColor);
-            AdjustableArrowCap adjustableArrowCap = new AdjustableArrowCap(3, 3);
-            pen.CustomEndCap = adjustableArrowCap;
-        }
-
 
         private void Kruskal_Click(object sender, EventArgs e)
         {
@@ -475,22 +461,18 @@ namespace GraphsClassProjectTakeTwo
 
         private void DrawRedLines(List<Edge> input)
         {
-            SetUpGraphicsAndPen(out Graphics graphics, out Pen pen, Color.Red);
+            SetUpGraphicsAndPen(CurrentGraph.IsDirected, out Graphics graphics, out Pen pen, Color.Red);
 
             foreach (Edge edge in input)
             {
                 Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
                 Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
                 graphics.DrawLine(pen, initialLocation, terminalLocation);
-                if (!CurrentGraph.IsDirected)
-                {
-                    graphics.DrawLine(pen, terminalLocation, initialLocation);
-                }
             }
         }
         private void DrawRedLines(List<Vertex> input, int sleepTime)
         {
-            SetUpGraphicsAndPen(out Graphics graphics, out Pen pen, Color.Red);
+            SetUpGraphicsAndPen(CurrentGraph.IsDirected, out Graphics graphics, out Pen pen, Color.Red);
 
             Vertex startingVertex, endingVertex;
 
@@ -503,14 +485,20 @@ namespace GraphsClassProjectTakeTwo
                 Point terminalLocation = new Point((int)(endingVertex.XCoord * panelGraph.Width), (int)(endingVertex.YCoord * panelGraph.Height));
                 graphics.DrawLine(pen, initialLocation, terminalLocation);
 
-                if (!CurrentGraph.IsDirected)
-                {
-                    graphics.DrawLine(pen, terminalLocation, initialLocation);
-                }
-
                 System.Threading.Thread.Sleep(sleepTime);
             }
 
+        }
+
+        private void SetUpGraphicsAndPen(bool useArrowCap, out Graphics graphics, out Pen pen, Color penColor)
+        {
+            graphics = panelGraph.CreateGraphics();
+            pen = new Pen(penColor);
+            if (useArrowCap)
+            {
+                AdjustableArrowCap adjustableArrowCap = new AdjustableArrowCap(3, 3);
+                pen.CustomEndCap = adjustableArrowCap;
+            }
         }
     }
 }
