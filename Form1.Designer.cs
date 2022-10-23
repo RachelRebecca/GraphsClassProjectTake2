@@ -34,9 +34,8 @@
             this.Prim = new System.Windows.Forms.Button();
             this.Dijkstra = new System.Windows.Forms.Button();
             this.Kruskal = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.tableWeights = new System.Windows.Forms.TableLayoutPanel();
-            this.panel1.SuspendLayout();
+            this.tableEdgesWeights = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.tableEdgesWeights)).BeginInit();
             this.SuspendLayout();
             // 
             // panelGraphButtons
@@ -44,7 +43,7 @@
             this.panelGraphButtons.AutoScroll = true;
             this.panelGraphButtons.Location = new System.Drawing.Point(634, 12);
             this.panelGraphButtons.Name = "panelGraphButtons";
-            this.panelGraphButtons.Size = new System.Drawing.Size(160, 330);
+            this.panelGraphButtons.Size = new System.Drawing.Size(194, 330);
             this.panelGraphButtons.TabIndex = 0;
             // 
             // panelGraph
@@ -95,27 +94,17 @@
             this.Kruskal.UseVisualStyleBackColor = true;
             this.Kruskal.Click += new System.EventHandler(this.Kruskal_Click);
             // 
-            // panel1
+            // tableEdgesWeights
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.tableWeights);
-            this.panel1.Location = new System.Drawing.Point(634, 358);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(160, 251);
-            this.panel1.TabIndex = 3;
-            // 
-            // tableWeights
-            // 
-            this.tableWeights.ColumnCount = 2;
-            this.tableWeights.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableWeights.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableWeights.Location = new System.Drawing.Point(0, 0);
-            this.tableWeights.Name = "tableWeights";
-            this.tableWeights.RowCount = 2;
-            this.tableWeights.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableWeights.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableWeights.Size = new System.Drawing.Size(159, 250);
-            this.tableWeights.TabIndex = 0;
+            this.tableEdgesWeights.AllowUserToAddRows = false;
+            this.tableEdgesWeights.AllowUserToDeleteRows = false;
+            this.tableEdgesWeights.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.tableEdgesWeights.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.tableEdgesWeights.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.tableEdgesWeights.Location = new System.Drawing.Point(634, 359);
+            this.tableEdgesWeights.Name = "tableEdgesWeights";
+            this.tableEdgesWeights.Size = new System.Drawing.Size(194, 250);
+            this.tableEdgesWeights.TabIndex = 3;
             // 
             // GraphProject
             // 
@@ -123,8 +112,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(795, 621);
-            this.Controls.Add(this.panel1);
+            this.ClientSize = new System.Drawing.Size(837, 621);
+            this.Controls.Add(this.tableEdgesWeights);
             this.Controls.Add(this.panelGraph);
             this.Controls.Add(this.panelGraphButtons);
             this.Controls.Add(this.Topological);
@@ -133,7 +122,7 @@
             this.Controls.Add(this.Kruskal);
             this.Name = "GraphProject";
             this.Text = "Graph Project";
-            this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tableEdgesWeights)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -146,8 +135,7 @@
         private System.Windows.Forms.Button Prim;
         private System.Windows.Forms.Button Dijkstra;
         private System.Windows.Forms.Button Kruskal;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.TableLayoutPanel tableWeights;
+        private System.Windows.Forms.DataGridView tableEdgesWeights;
     }
 }
 

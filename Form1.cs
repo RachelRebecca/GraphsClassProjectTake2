@@ -118,6 +118,19 @@ namespace GraphsClassProjectTakeTwo
 
         private void ShowWeights(Graph graph)
         {
+            DataTable table = new DataTable();
+            table.Columns.Add("Edges", typeof(string));
+            table.Columns.Add("Weights", typeof(double));
+
+            foreach (Edge edge in graph.Edges)
+            {
+                String edgeName = edge.Start.Name + edge.End.Name;
+                double weight = edge.Weight;
+                table.Rows.Add(new object[] { edgeName, weight });
+            }
+
+            tableEdgesWeights.DataSource = table;
+
         }
 
         private void ShowGraph(Graph graph)
@@ -383,7 +396,8 @@ namespace GraphsClassProjectTakeTwo
 
                         // draw minimum spanning graph edges in red
                         DrawRedLines(output);
-                    } catch (Exception exception)
+                    }
+                    catch (Exception exception)
                     {
                         MessageBox.Show(exception.Message);
                     }
