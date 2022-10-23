@@ -111,7 +111,33 @@ namespace GraphsClassProjectTakeTwo
 
             ShowGraph(graph);
 
+            SetUpAlgorithmButtons(graph);
+
             ShowWeights(graph);
+        }
+
+        private void SetUpAlgorithmButtons(Graph graph)
+        {
+            Topological.Enabled = true;
+            Kruskal.Enabled = true;
+            Prim.Enabled = true;
+            Dijkstra.Enabled = true;
+
+            if (!graph.IsWeighted)
+            {
+                Dijkstra.Enabled = false;
+            }
+            if (graph.IsDirected)
+            {
+                Kruskal.Enabled = false;
+                Prim.Enabled = false;
+            }
+
+            if (!CurrentGraph.IsDirected)
+            {
+                Topological.Enabled = false;
+
+            }
 
         }
 
@@ -240,11 +266,7 @@ namespace GraphsClassProjectTakeTwo
         {
             CurrentAlgorithm = AlgorithmType.KRUSKAL;
 
-            if (CurrentGraph == null)
-            {
-                MessageBox.Show("There is no graph showing yet.");
-            }
-            else if (!CurrentGraph.IsDirected)
+            if (CurrentGraph != null && !CurrentGraph.IsDirected)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
@@ -259,29 +281,13 @@ namespace GraphsClassProjectTakeTwo
                     MessageBox.Show(exception.Message);
                 }
             }
-            else
-            {
-                CreateLinesBetweenNodes(CurrentGraph);
-
-                MessageBox.Show("Kruskal's Algorithm is not available for selected graph.");
-            }
         }
 
         private void Topological_Click(object sender, EventArgs e)
         {
             CurrentAlgorithm = AlgorithmType.TOPOLOGICAL;
 
-            if (CurrentGraph == null)
-            {
-                MessageBox.Show("There is no graph showing yet.");
-            }
-            else if (!CurrentGraph.IsDirected)
-            {
-                CreateLinesBetweenNodes(CurrentGraph);
-
-                MessageBox.Show("Topological Sort is not available for selected graph.");
-            }
-            else
+            if (CurrentGraph != null && CurrentGraph.IsDirected)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
@@ -311,21 +317,11 @@ namespace GraphsClassProjectTakeTwo
         {
             CurrentAlgorithm = AlgorithmType.PRIM;
 
-            if (CurrentGraph == null)
-            {
-                MessageBox.Show("There is no graph showing yet.");
-            }
-            else if (!CurrentGraph.IsDirected)
+            if (CurrentGraph != null && !CurrentGraph.IsDirected)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
                 MessageBox.Show("Click on the label near the node that you want to use for the algorithm");
-            }
-            else
-            {
-                CreateLinesBetweenNodes(CurrentGraph);
-
-                MessageBox.Show("Prim's Algorithm is not available for selected graph.");
             }
 
         }
@@ -336,17 +332,7 @@ namespace GraphsClassProjectTakeTwo
 
             SelectedDijkstraNodes = new List<Vertex>();
 
-            if (CurrentGraph == null)
-            {
-                MessageBox.Show("There is no graph showing yet.");
-            }
-            else if (!CurrentGraph.IsWeighted)
-            {
-                CreateLinesBetweenNodes(CurrentGraph);
-
-                MessageBox.Show("Dijkstra's Algorithm is not available for selected graph.");
-            }
-            else
+            if (CurrentGraph != null && CurrentGraph.IsWeighted)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
@@ -358,12 +344,7 @@ namespace GraphsClassProjectTakeTwo
         private void Label_Click(object sender, EventArgs e)
         {
             Label label = (Label)sender;
-            if (CurrentAlgorithm == AlgorithmType.NONE || CurrentAlgorithm == AlgorithmType.TOPOLOGICAL || CurrentAlgorithm == AlgorithmType.KRUSKAL)
-            {
-                // do nothing
-            }
-
-            else if (CurrentAlgorithm == AlgorithmType.PRIM)
+            if (CurrentAlgorithm == AlgorithmType.PRIM)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 

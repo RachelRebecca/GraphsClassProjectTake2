@@ -56,6 +56,7 @@
             // 
             // Topological
             // 
+            this.Topological.Enabled = false;
             this.Topological.Location = new System.Drawing.Point(343, 574);
             this.Topological.Name = "Topological";
             this.Topological.Size = new System.Drawing.Size(104, 35);
@@ -66,6 +67,7 @@
             // 
             // Prim
             // 
+            this.Prim.Enabled = false;
             this.Prim.Location = new System.Drawing.Point(495, 574);
             this.Prim.Name = "Prim";
             this.Prim.Size = new System.Drawing.Size(104, 35);
@@ -76,6 +78,7 @@
             // 
             // Dijkstra
             // 
+            this.Dijkstra.Enabled = false;
             this.Dijkstra.Location = new System.Drawing.Point(23, 574);
             this.Dijkstra.Name = "Dijkstra";
             this.Dijkstra.Size = new System.Drawing.Size(104, 35);
@@ -86,6 +89,7 @@
             // 
             // Kruskal
             // 
+            this.Kruskal.Enabled = false;
             this.Kruskal.Location = new System.Drawing.Point(188, 574);
             this.Kruskal.Name = "Kruskal";
             this.Kruskal.Size = new System.Drawing.Size(104, 35);
