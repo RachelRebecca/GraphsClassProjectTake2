@@ -168,9 +168,16 @@ namespace GraphsClassProjectTakeTwo
         {
             Control ctrl = this.GetChildAtPoint(e.Location);
             List<Control> algorithms = new List<Control>() { Dijkstra, Prim, Kruskal, Topological };
+            List<Control> graphOperations = new List<Control>() { removeEdge, addEdge, removeNode };
             if (ctrl != null && algorithms.Contains(ctrl) && !ctrl.Enabled)
             {
                 toolTip.SetToolTip(ctrl, "This algorithm is not available.");
+                toolTip.Show(toolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
+                Console.WriteLine(toolTip);
+            }
+            else if (ctrl != null && graphOperations.Contains(ctrl) && !ctrl.Enabled)
+            {
+                toolTip.SetToolTip(ctrl, "This graph operation is not available.");
                 toolTip.Show(toolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
                 Console.WriteLine(toolTip);
             }
