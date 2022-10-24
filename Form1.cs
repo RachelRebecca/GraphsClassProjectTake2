@@ -161,9 +161,26 @@ namespace GraphsClassProjectTakeTwo
             tableEdgesWeights.DataSource = table;
         }
 
+        private void Form_MouseMove(object sender, MouseEventArgs e)
+        {
+            Control ctrl = this.GetChildAtPoint(e.Location);
+            List<Control> algorithms = new List<Control>() { Dijkstra, Prim, Kruskal, Topological };
+            if (ctrl != null && algorithms.Contains(ctrl) && !ctrl.Enabled)
+            {
+                toolTip.SetToolTip(ctrl, "This algorithm is not available.");
+                toolTip.Show(toolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
+                Console.WriteLine(toolTip);
+            }
+            else
+            {
+                toolTip.Hide(this);
+            }
+        }
+
         private void TableWeights_CellClick(object sender, DataGridViewCellEventArgs evt)
         {
             CreateLinesBetweenNodes(CurrentGraph);
+
             DataGridView dgv = (DataGridView)sender;
             if (dgv != null && dgv.CurrentRow.Selected)
             {
@@ -180,6 +197,8 @@ namespace GraphsClassProjectTakeTwo
                     graphics.DrawLine(pen, initialLocation, terminalLocation);
                 }
             }
+
+            ResetTableWeightsSelected();
         }
 
         private void ShowGraph(Graph graph)
@@ -293,6 +312,8 @@ namespace GraphsClassProjectTakeTwo
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
+                ResetTableWeightsSelected();
+
                 try
                 {
                     List<Edge> edges = CurrentGraph.Kruskal();
@@ -313,6 +334,8 @@ namespace GraphsClassProjectTakeTwo
             if (CurrentGraph != null && CurrentGraph.IsDirected)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
+
+                ResetTableWeightsSelected();
 
                 string topologicalOutput = "";
 
@@ -344,6 +367,8 @@ namespace GraphsClassProjectTakeTwo
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
+                ResetTableWeightsSelected();
+
                 MessageBox.Show("Click on the label near the node that you want to use for the algorithm");
             }
 
@@ -359,6 +384,8 @@ namespace GraphsClassProjectTakeTwo
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
+                ResetTableWeightsSelected();
+
                 MessageBox.Show("Click on the label near the starting node that you want to use for the algorithm");
 
             }
@@ -370,6 +397,8 @@ namespace GraphsClassProjectTakeTwo
             if (CurrentAlgorithm == AlgorithmType.PRIM)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
+
+                ResetTableWeightsSelected();
 
                 int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
 
@@ -403,6 +432,8 @@ namespace GraphsClassProjectTakeTwo
                     // you haven't yet selected a node
 
                     CreateLinesBetweenNodes(CurrentGraph);
+
+                    ResetTableWeightsSelected();
 
                     int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
 
@@ -467,12 +498,24 @@ namespace GraphsClassProjectTakeTwo
         private void DrawRedLines(List<Edge> input)
         {
             SetUpGraphicsAndPen(CurrentGraph.IsDirected, out Graphics graphics, out Pen pen, Color.Red);
+            
+            List<string> edgeNames = new List<string>();
 
             foreach (Edge edge in input)
             {
+                edgeNames.Add(edge.Start.Name + edge.End.Name);
                 Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
                 Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
                 graphics.DrawLine(pen, initialLocation, terminalLocation);
+            }
+
+            DataTable table = (DataTable)tableEdgesWeights.DataSource;
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                if (edgeNames.Contains((String)table.Rows[i]["Edges"]))
+                {
+                    tableEdgesWeights.Rows[i].Selected = true;
+                }
             }
         }
         private void DrawRedLines(List<Vertex> input, int sleepTime)
@@ -481,11 +524,14 @@ namespace GraphsClassProjectTakeTwo
 
             Vertex startingVertex, endingVertex;
 
+            List<string> edgeNames = new List<string>();
+
             for (int i = 0; i < input.Count - 1; i++)
             {
                 startingVertex = input[i];
                 endingVertex = input[i + 1];
 
+                edgeNames.Add(startingVertex.Name + endingVertex.Name);
                 Point initialLocation = new Point((int)(startingVertex.XCoord * panelGraph.Width), (int)(startingVertex.YCoord * panelGraph.Height));
                 Point terminalLocation = new Point((int)(endingVertex.XCoord * panelGraph.Width), (int)(endingVertex.YCoord * panelGraph.Height));
                 input.ForEach(e => Console.WriteLine(e.Name));
@@ -502,6 +548,15 @@ namespace GraphsClassProjectTakeTwo
                 System.Threading.Thread.Sleep(sleepTime);
             }
 
+            DataTable table = (DataTable)tableEdgesWeights.DataSource;
+            for (int i = 0; i < table.Rows.Count; i++)
+            {
+                if (edgeNames.Contains((String)table.Rows[i]["Edges"]))
+                {
+                    tableEdgesWeights.Rows[i].Selected = true;
+                }
+            }
+
         }
 
         private void SetUpGraphicsAndPen(bool useArrowCap, out Graphics graphics, out Pen pen, Color penColor)
@@ -515,20 +570,13 @@ namespace GraphsClassProjectTakeTwo
             }
         }
 
-        private void Form_MouseMove(object sender, MouseEventArgs e)
+        private void ResetTableWeightsSelected()
         {
-            Control ctrl = this.GetChildAtPoint(e.Location);
-            List<Control> algorithms = new List<Control>() { Dijkstra, Prim, Kruskal, Topological };
-            if (ctrl != null && algorithms.Contains(ctrl) && !ctrl.Enabled)
-                {
-                    toolTip.SetToolTip(ctrl, "This algorithm is not available.");
-                    toolTip.Show(toolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
-                    Console.WriteLine(toolTip);
-            }
-            else
+            foreach (DataGridViewRow row in tableEdgesWeights.Rows)
             {
-                toolTip.Hide(this);
+                row.Selected = false;
             }
         }
+
     }
 }
