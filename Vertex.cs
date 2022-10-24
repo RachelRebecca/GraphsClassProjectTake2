@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GraphsClassProjectTakeTwo
 {
-    internal class Vertex
+    public class Vertex
     {
         public String Name { get; set; }
         public List<Edge> Edges { get; set; }
