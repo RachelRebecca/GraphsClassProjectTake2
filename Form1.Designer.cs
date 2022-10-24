@@ -104,6 +104,8 @@
             this.tableEdgesWeights.AllowUserToDeleteRows = false;
             this.tableEdgesWeights.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.tableEdgesWeights.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.tableEdgesWeights.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.tableEdgesWeights.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tableEdgesWeights.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.tableEdgesWeights.Location = new System.Drawing.Point(634, 359);
             this.tableEdgesWeights.Name = "tableEdgesWeights";
