@@ -19,9 +19,9 @@ namespace GraphsClassProjectTakeTwo
 
         private Graph CurrentGraph = null;
 
-        private AlgorithmType CurrentAlgorithm = AlgorithmType.NONE;
+        private GraphOptions CurrentGraphOperation = GraphOptions.NONE;
 
-        private List<Vertex> SelectedDijkstraNodes = new List<Vertex>();
+        private List<Vertex> SelectedNodes = new List<Vertex>();
 
         private ToolTip toolTip;
 
@@ -111,7 +111,7 @@ namespace GraphsClassProjectTakeTwo
 
             CurrentGraph = graph;
 
-            CurrentAlgorithm = AlgorithmType.NONE;
+            CurrentGraphOperation = GraphOptions.NONE;
 
             ShowGraph(graph);
 
@@ -126,6 +126,9 @@ namespace GraphsClassProjectTakeTwo
             Kruskal.Enabled = true;
             Prim.Enabled = true;
             Dijkstra.Enabled = true;
+            removeEdge.Enabled = true;
+            removeNode.Enabled = true;
+            addEdge.Enabled = true;
 
             if (!graph.IsWeighted)
             {
@@ -306,7 +309,7 @@ namespace GraphsClassProjectTakeTwo
 
         private void Kruskal_Click(object sender, EventArgs e)
         {
-            CurrentAlgorithm = AlgorithmType.KRUSKAL;
+            CurrentGraphOperation = GraphOptions.KRUSKAL;
 
             if (CurrentGraph != null && !CurrentGraph.IsDirected)
             {
@@ -329,7 +332,7 @@ namespace GraphsClassProjectTakeTwo
 
         private void Topological_Click(object sender, EventArgs e)
         {
-            CurrentAlgorithm = AlgorithmType.TOPOLOGICAL;
+            CurrentGraphOperation = GraphOptions.TOPOLOGICAL;
 
             if (CurrentGraph != null && CurrentGraph.IsDirected)
             {
@@ -361,7 +364,7 @@ namespace GraphsClassProjectTakeTwo
 
         private void Prim_Click(object sender, EventArgs e)
         {
-            CurrentAlgorithm = AlgorithmType.PRIM;
+            CurrentGraphOperation = GraphOptions.PRIM;
 
             if (CurrentGraph != null && !CurrentGraph.IsDirected)
             {
@@ -376,9 +379,9 @@ namespace GraphsClassProjectTakeTwo
 
         private void Dijkstra_Click(object sender, EventArgs e)
         {
-            CurrentAlgorithm = AlgorithmType.DIJKSTRA;
+            CurrentGraphOperation = GraphOptions.DIJKSTRA;
 
-            SelectedDijkstraNodes = new List<Vertex>();
+            SelectedNodes = new List<Vertex>();
 
             if (CurrentGraph != null && CurrentGraph.IsWeighted)
             {
@@ -394,7 +397,7 @@ namespace GraphsClassProjectTakeTwo
         private void Label_Click(object sender, EventArgs e)
         {
             Label label = (Label)sender;
-            if (CurrentAlgorithm == AlgorithmType.PRIM)
+            if (CurrentGraphOperation == GraphOptions.PRIM)
             {
                 CreateLinesBetweenNodes(CurrentGraph);
 
@@ -425,9 +428,9 @@ namespace GraphsClassProjectTakeTwo
                 }
 
             }
-            else if (CurrentAlgorithm == AlgorithmType.DIJKSTRA)
+            else if (CurrentGraphOperation == GraphOptions.DIJKSTRA)
             {
-                if (SelectedDijkstraNodes.Count == 0)
+                if (SelectedNodes.Count == 0)
                 {
                     // you haven't yet selected a node
 
@@ -441,7 +444,7 @@ namespace GraphsClassProjectTakeTwo
                     {
                         Vertex start = CurrentGraph.Vertices[initialIndex];
 
-                        SelectedDijkstraNodes.Add(start);
+                        SelectedNodes.Add(start);
 
                         MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node you want to use for the algorithm");
                     }
@@ -451,7 +454,7 @@ namespace GraphsClassProjectTakeTwo
                     }
 
                 }
-                else if (SelectedDijkstraNodes.Count == 1)
+                else if (SelectedNodes.Count == 1)
                 {
                     // you have already selected the starting node
 
@@ -461,11 +464,11 @@ namespace GraphsClassProjectTakeTwo
                     {
                         Vertex end = CurrentGraph.Vertices[terminalIndex];
 
-                        SelectedDijkstraNodes.Add(end);
+                        SelectedNodes.Add(end);
 
                         try
                         {
-                            List<Vertex> output = CurrentGraph.Dijkstra(SelectedDijkstraNodes[0], end, out double shortestDistance);
+                            List<Vertex> output = CurrentGraph.Dijkstra(SelectedNodes[0], end, out double shortestDistance);
 
                             // Draw path one by one using red lines
                             DrawRedLines(output, 500);
@@ -477,7 +480,7 @@ namespace GraphsClassProjectTakeTwo
                             MessageBox.Show(exception.Message);
                         }
 
-                        SelectedDijkstraNodes = new List<Vertex>();
+                        SelectedNodes = new List<Vertex>();
 
                     }
                     else
@@ -491,6 +494,46 @@ namespace GraphsClassProjectTakeTwo
                     // do nothing, we only care about the starting and ending node
                 }
 
+            }
+            else if (CurrentGraphOperation == GraphOptions.REMOVE_NODE)
+            {
+                int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                if (initialIndex < 0)
+                {
+                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                }
+                else
+                {
+                    panelGraph.Controls.Clear();
+
+                    panelGraph.Refresh();
+
+                    panelGraph.BackColor = Color.Gray;
+
+                    Vertex nodeToBeDeleted = CurrentGraph.Vertices[initialIndex];
+
+                    CurrentGraph.Vertices.Remove(nodeToBeDeleted);
+
+                    List<Edge> edgesToBeRemoved = new List<Edge>();
+
+                    foreach (Edge edge in CurrentGraph.Edges)
+                    {
+                        if (edge.Start.Equals(nodeToBeDeleted) || edge.End.Equals(nodeToBeDeleted))
+                        {
+                            edgesToBeRemoved.Add(edge);
+                        }
+                    }
+
+                    CurrentGraph.Edges.RemoveAll(edge => edgesToBeRemoved.Contains(edge));
+
+                    ShowGraph(CurrentGraph);
+
+                    CreateLinesBetweenNodes(CurrentGraph);
+
+                    ResetTableWeightsSelected();
+
+                }
             }
 
         }
@@ -578,5 +621,18 @@ namespace GraphsClassProjectTakeTwo
             }
         }
 
+        private void RemoveNode_Click(object sender, EventArgs e)
+        {
+            CurrentGraphOperation = GraphOptions.REMOVE_NODE;
+
+            if (CurrentGraph != null)
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                ResetTableWeightsSelected();
+
+                MessageBox.Show("Click on the label near the node that you want to remove");
+            }
+        }
     }
 }

@@ -35,9 +35,9 @@
             this.Dijkstra = new System.Windows.Forms.Button();
             this.Kruskal = new System.Windows.Forms.Button();
             this.tableEdgesWeights = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.removeEdge = new System.Windows.Forms.Button();
+            this.removeNode = new System.Windows.Forms.Button();
+            this.addEdge = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tableEdgesWeights)).BeginInit();
             this.SuspendLayout();
             // 
@@ -116,32 +116,36 @@
             this.tableEdgesWeights.TabIndex = 3;
             this.tableEdgesWeights.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.TableWeights_CellClick);
             // 
-            // button1
+            // removeEdge
             // 
-            this.button1.Location = new System.Drawing.Point(110, 594);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Remove Edge";
-            this.button1.UseVisualStyleBackColor = true;
+            this.removeEdge.Enabled = false;
+            this.removeEdge.Location = new System.Drawing.Point(110, 594);
+            this.removeEdge.Name = "removeEdge";
+            this.removeEdge.Size = new System.Drawing.Size(101, 23);
+            this.removeEdge.TabIndex = 4;
+            this.removeEdge.Text = "Remove Edge";
+            this.removeEdge.UseVisualStyleBackColor = true;
             // 
-            // button2
+            // removeNode
             // 
-            this.button2.Location = new System.Drawing.Point(269, 594);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(96, 23);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Remove Node";
-            this.button2.UseVisualStyleBackColor = true;
+            this.removeNode.Enabled = false;
+            this.removeNode.Location = new System.Drawing.Point(269, 594);
+            this.removeNode.Name = "removeNode";
+            this.removeNode.Size = new System.Drawing.Size(96, 23);
+            this.removeNode.TabIndex = 5;
+            this.removeNode.Text = "Remove Node";
+            this.removeNode.UseVisualStyleBackColor = true;
+            this.removeNode.Click += new System.EventHandler(this.RemoveNode_Click);
             // 
-            // button3
+            // addEdge
             // 
-            this.button3.Location = new System.Drawing.Point(437, 594);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(69, 23);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "Add Edge";
-            this.button3.UseVisualStyleBackColor = true;
+            this.addEdge.Enabled = false;
+            this.addEdge.Location = new System.Drawing.Point(437, 594);
+            this.addEdge.Name = "addEdge";
+            this.addEdge.Size = new System.Drawing.Size(69, 23);
+            this.addEdge.TabIndex = 6;
+            this.addEdge.Text = "Add Edge";
+            this.addEdge.UseVisualStyleBackColor = true;
             // 
             // GraphProject
             // 
@@ -150,9 +154,9 @@
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.ClientSize = new System.Drawing.Size(837, 621);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.addEdge);
+            this.Controls.Add(this.removeNode);
+            this.Controls.Add(this.removeEdge);
             this.Controls.Add(this.tableEdgesWeights);
             this.Controls.Add(this.panelGraph);
             this.Controls.Add(this.panelGraphButtons);
@@ -177,9 +181,9 @@
         private System.Windows.Forms.Button Dijkstra;
         private System.Windows.Forms.Button Kruskal;
         private System.Windows.Forms.DataGridView tableEdgesWeights;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button removeEdge;
+        private System.Windows.Forms.Button removeNode;
+        private System.Windows.Forms.Button addEdge;
     }
 }
 
