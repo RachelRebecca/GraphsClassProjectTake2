@@ -519,20 +519,32 @@ namespace GraphsClassProjectTakeTwo
                     panelGraph.BackColor = Color.Gray;
 
                     Vertex nodeToBeDeleted = CurrentGraph.Vertices[initialIndex];
+                    nodeToBeDeleted.Indegree--;
 
                     CurrentGraph.Vertices.Remove(nodeToBeDeleted);
 
                     List<Edge> edgesToBeRemoved = new List<Edge>();
+                    List<Vertex> verticesThatAreNowStandalone = new List<Vertex>();
 
                     foreach (Edge edge in CurrentGraph.Edges)
                     {
-                        if (edge.Start.Equals(nodeToBeDeleted) || edge.End.Equals(nodeToBeDeleted))
+                        if (edge.Start.Equals(nodeToBeDeleted))
+                        {
+                            edgesToBeRemoved.Add(edge);
+                            edge.End.Indegree--;
+                            if (edge.End.Indegree == 0 && edge.Start.Indegree == 0)
+                            {
+                                verticesThatAreNowStandalone.Add(edge.End);
+                            }
+                        }
+                        else if (edge.End.Equals(nodeToBeDeleted))
                         {
                             edgesToBeRemoved.Add(edge);
                         }
                     }
 
                     CurrentGraph.Edges.RemoveAll(edge => edgesToBeRemoved.Contains(edge));
+                    CurrentGraph.Vertices.RemoveAll(vertex => verticesThatAreNowStandalone.Contains(vertex));
 
                     ShowGraph(CurrentGraph);
 
