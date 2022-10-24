@@ -552,6 +552,10 @@ namespace GraphsClassProjectTakeTwo
                     CurrentGraph.Edges.RemoveAll(edge => edgesToBeRemoved.Contains(edge));
                     CurrentGraph.Vertices.RemoveAll(vertex => verticesThatAreNowStandalone.Contains(vertex));
 
+                    if (verticesThatAreNowStandalone.Count > 0)
+                    {
+                        MessageBox.Show("Some standalone nodes have also been deleted");
+                    }
                     ShowGraph(CurrentGraph);
 
                     CreateLinesBetweenNodes(CurrentGraph);
