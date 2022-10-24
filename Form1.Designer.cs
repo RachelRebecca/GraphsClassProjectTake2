@@ -127,6 +127,7 @@
             this.Controls.Add(this.Kruskal);
             this.Name = "GraphProject";
             this.Text = "Graph Project";
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form_MouseMove);
             ((System.ComponentModel.ISupportInitialize)(this.tableEdgesWeights)).EndInit();
             this.ResumeLayout(false);
 

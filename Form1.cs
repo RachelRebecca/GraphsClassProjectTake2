@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 
 namespace GraphsClassProjectTakeTwo
 {
@@ -24,9 +23,13 @@ namespace GraphsClassProjectTakeTwo
 
         private List<Vertex> SelectedDijkstraNodes = new List<Vertex>();
 
+        private ToolTip toolTip;
+
         public GraphProject()
         {
             InitializeComponent();
+
+            toolTip = new ToolTip();
 
             sqlCon = this.MakeSQLConnection();
 
@@ -509,6 +512,22 @@ namespace GraphsClassProjectTakeTwo
             {
                 AdjustableArrowCap adjustableArrowCap = new AdjustableArrowCap(3, 3);
                 pen.CustomEndCap = adjustableArrowCap;
+            }
+        }
+
+        private void Form_MouseMove(object sender, MouseEventArgs e)
+        {
+            Control ctrl = this.GetChildAtPoint(e.Location);
+            List<Control> algorithms = new List<Control>() { Dijkstra, Prim, Kruskal, Topological };
+            if (ctrl != null && algorithms.Contains(ctrl) && !ctrl.Enabled)
+                {
+                    toolTip.SetToolTip(ctrl, "This algorithm is not available.");
+                    toolTip.Show(toolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
+                    Console.WriteLine(toolTip);
+            }
+            else
+            {
+                toolTip.Hide(this);
             }
         }
     }
