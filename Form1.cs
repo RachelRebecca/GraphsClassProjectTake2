@@ -519,7 +519,8 @@ namespace GraphsClassProjectTakeTwo
                     panelGraph.BackColor = Color.Gray;
 
                     Vertex nodeToBeDeleted = CurrentGraph.Vertices[initialIndex];
-                    nodeToBeDeleted.Indegree--;
+                    nodeToBeDeleted.Outdegree = 0;
+                    nodeToBeDeleted.Indegree = 0;
 
                     CurrentGraph.Vertices.Remove(nodeToBeDeleted);
 
@@ -532,14 +533,19 @@ namespace GraphsClassProjectTakeTwo
                         {
                             edgesToBeRemoved.Add(edge);
                             edge.End.Indegree--;
-                            if (edge.End.Indegree == 0 && edge.Start.Indegree == 0)
-                            {
-                                verticesThatAreNowStandalone.Add(edge.End);
-                            }
                         }
                         else if (edge.End.Equals(nodeToBeDeleted))
                         {
                             edgesToBeRemoved.Add(edge);
+                            edge.Start.Outdegree--;
+                        }
+                    }
+
+                    foreach (Vertex vertex in CurrentGraph.Vertices)
+                    {
+                        if (vertex.Outdegree == 0 && vertex.Indegree == 0)
+                        {
+                            verticesThatAreNowStandalone.Add(vertex);
                         }
                     }
 
