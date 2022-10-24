@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace GraphsClassProjectTakeTwo
 {
@@ -155,6 +156,27 @@ namespace GraphsClassProjectTakeTwo
             }
 
             tableEdgesWeights.DataSource = table;
+        }
+
+        private void TableWeights_CellClick(object sender, DataGridViewCellEventArgs evt)
+        {
+            CreateLinesBetweenNodes(CurrentGraph);
+            DataGridView dgv = (DataGridView)sender;
+            if (dgv != null && dgv.CurrentRow.Selected)
+            {
+                DataTable table = (DataTable)dgv.DataSource;
+                String edgeInTable = (String)(table.Rows[dgv.CurrentRow.Index]["Edges"]);
+                Edge edge = CurrentGraph.Edges.Find(e => (e.Start.Name + e.End.Name).Equals(edgeInTable) || (e.End.Name + e.Start.Name).Equals(edgeInTable));
+                if (edge != null)
+                {
+                    SetUpGraphicsAndPen(CurrentGraph.IsDirected, out Graphics graphics, out Pen pen, Color.Yellow);
+                    pen.Width = 1;
+
+                    Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
+                    Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
+                    graphics.DrawLine(pen, initialLocation, terminalLocation);
+                }
+            }
         }
 
         private void ShowGraph(Graph graph)
@@ -465,13 +487,13 @@ namespace GraphsClassProjectTakeTwo
                 Point terminalLocation = new Point((int)(endingVertex.XCoord * panelGraph.Width), (int)(endingVertex.YCoord * panelGraph.Height));
                 input.ForEach(e => Console.WriteLine(e.Name));
                 Console.WriteLine("Start: " + startingVertex.Name + " End: " + endingVertex.Name);
-                
-               /*
-                Edge edge = CurrentGraph.Edges.Find(e => (e.Start.Equals(startingVertex) && e.End.Equals(endingVertex)) ||
-                                                                    (e.Start.Equals(endingVertex) && e.End.Equals(startingVertex)));
-                Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
-                Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
-                */
+
+                /*
+                 Edge edge = CurrentGraph.Edges.Find(e => (e.Start.Equals(startingVertex) && e.End.Equals(endingVertex)) ||
+                                                                     (e.Start.Equals(endingVertex) && e.End.Equals(startingVertex)));
+                 Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
+                 Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
+                 */
                 graphics.DrawLine(pen, initialLocation, terminalLocation);
 
                 System.Threading.Thread.Sleep(sleepTime);

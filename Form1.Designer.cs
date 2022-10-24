@@ -109,6 +109,7 @@
             this.tableEdgesWeights.Name = "tableEdgesWeights";
             this.tableEdgesWeights.Size = new System.Drawing.Size(194, 250);
             this.tableEdgesWeights.TabIndex = 3;
+            this.tableEdgesWeights.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.TableWeights_CellClick);
             // 
             // GraphProject
             // 
