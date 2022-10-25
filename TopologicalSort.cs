@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraphsClassProjectTakeTwo
 {
@@ -21,19 +19,18 @@ namespace GraphsClassProjectTakeTwo
             // make indegree list (use each vertex's indegree) - dictionary
             Dictionary<Vertex, int> indegreeList = new Dictionary<Vertex, int>();
 
-            List<Vertex> terminalVertices = new List<Vertex>();
-            foreach (Vertex vertex in this.Vertices)
+            foreach (Vertex vertex in Vertices)
             {
-                var currentEdges = Edges.Where(e => (e.Start.Equals(vertex) || e.End.Equals(vertex)));
-
-                foreach (Edge edge in currentEdges)
+                var edgesForVertex = Edges.Where(e => e.Start.Equals(vertex));
+                List<Vertex> neighbors = new List<Vertex>();
+                foreach (Edge edge in edgesForVertex)
                 {
-                    if (edge.Start.Equals(vertex))
+                    if (!neighbors.Contains(edge.End))
                     {
-                        terminalVertices.Add(edge.End);
+                        neighbors.Add(edge.End);
                     }
                 }
-                adjacencyList.Add(vertex, terminalVertices);
+                adjacencyList.Add(vertex, neighbors);
                 indegreeList.Add(vertex, vertex.Indegree);
             }
 
@@ -60,6 +57,7 @@ namespace GraphsClassProjectTakeTwo
             {
                 // dequeue Vertex v, add to sorted
                 Vertex v = zeroes.Dequeue();
+
                 sorted.Add(v);
                 numVerticesAdded++;
 
@@ -80,6 +78,10 @@ namespace GraphsClassProjectTakeTwo
                 }
             }
 
+            if (numVerticesAdded != Vertices.Count)
+            {
+                throw new Exception("Graph contains cycle");
+            }
             return sorted;
         }
 
