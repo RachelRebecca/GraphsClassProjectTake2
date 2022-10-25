@@ -522,10 +522,7 @@ namespace GraphsClassProjectTakeTwo
                     nodeToBeDeleted.Outdegree = 0;
                     nodeToBeDeleted.Indegree = 0;
 
-                    CurrentGraph.Vertices.Remove(nodeToBeDeleted);
-
                     List<Edge> edgesToBeRemoved = new List<Edge>();
-                    List<Vertex> verticesThatAreNowStandalone = new List<Vertex>();
 
                     foreach (Edge edge in CurrentGraph.Edges)
                     {
@@ -533,44 +530,164 @@ namespace GraphsClassProjectTakeTwo
                         {
                             edgesToBeRemoved.Add(edge);
                             edge.End.Indegree--;
+                            Edge deletedEdge = edge.End.Edges.Find(edg => edg.Start.Equals(nodeToBeDeleted) || edg.End.Equals(nodeToBeDeleted));
+                            edge.End.Edges.Remove(deletedEdge);
                         }
                         else if (edge.End.Equals(nodeToBeDeleted))
                         {
                             edgesToBeRemoved.Add(edge);
                             edge.Start.Outdegree--;
                         }
+
                     }
 
-                    foreach (Vertex vertex in CurrentGraph.Vertices)
-                    {
-                        if (vertex.Outdegree == 0 && vertex.Indegree == 0)
-                        {
-                            verticesThatAreNowStandalone.Add(vertex);
-                        }
-                    }
+                    CurrentGraph.Vertices.Remove(nodeToBeDeleted);
+                    nodeToBeDeleted.Edges.Clear();
+
 
                     CurrentGraph.Edges.RemoveAll(edge => edgesToBeRemoved.Contains(edge));
-                    CurrentGraph.Vertices.RemoveAll(vertex => verticesThatAreNowStandalone.Contains(vertex));
 
-                    if (verticesThatAreNowStandalone.Count > 0)
-                    {
-                        MessageBox.Show("Some standalone nodes have also been deleted");
-                    }
+                    CurrentGraph.Vertices.ForEach(v => Console.WriteLine(v.Name + " " + v.Edges.Count));
+                    CurrentGraph.Edges.ForEach(edge => Console.WriteLine(edge.Start.Name + edge.End.Name));
+
                     ShowGraph(CurrentGraph);
 
                     CreateLinesBetweenNodes(CurrentGraph);
+
+                    ShowWeights(CurrentGraph);
 
                     ResetTableWeightsSelected();
 
                 }
             }
+            else if (CurrentGraphOperation == GraphOptions.REMOVE_EDGE)
+            {
+                if (SelectedNodes.Count == 0)
+                {
+                    int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
 
+                    if (initialIndex >= 0)
+                    {
+                        Vertex start = CurrentGraph.Vertices[initialIndex];
+
+                        SelectedNodes.Add(start);
+
+                        MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to remove");
+                    }
+
+
+                    else
+                    {
+                        MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                    }
+
+                }
+                else if (SelectedNodes.Count == 1)
+                {
+                    // you have already selected the starting node
+
+                    int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                    if (terminalIndex >= 0)
+                    {
+                        panelGraph.Controls.Clear();
+
+                        panelGraph.Refresh();
+
+                        panelGraph.BackColor = Color.Gray;
+
+                        Vertex end = CurrentGraph.Vertices[terminalIndex];
+
+                        SelectedNodes.Add(end);
+
+                        Edge edge = CurrentGraph.Edges.Find(edg => (edg.Start.Name.Equals(SelectedNodes[0].Name) && edg.End.Name.Equals(end.Name))
+                        || (!CurrentGraph.IsDirected && edg.End.Name.Equals(SelectedNodes[0].Name) && edg.Start.Name.Equals(end.Name)));
+
+                        if (edge != null)
+                        {
+                            edge.Start.Indegree--;
+                            edge.End.Indegree++;
+                            edge.End.Edges.Remove(edge);
+                            CurrentGraph.Edges.Remove(edge);
+                        }
+
+
+                        ShowGraph(CurrentGraph);
+
+                        CreateLinesBetweenNodes(CurrentGraph);
+
+                        ShowWeights(CurrentGraph);
+
+                        ResetTableWeightsSelected();
+
+                        SelectedNodes = new List<Vertex>();
+                    }
+                }
+            }
+            else if (CurrentGraphOperation == GraphOptions.ADD_EDGE)
+            {
+                if (SelectedNodes.Count == 0)
+                {
+                    int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                    if (initialIndex >= 0)
+                    {
+                        Vertex start = CurrentGraph.Vertices[initialIndex];
+
+                        SelectedNodes.Add(start);
+
+                        MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to add");
+                    }
+
+                    else
+                    {
+                        MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                    }
+
+                }
+                else if (SelectedNodes.Count == 1)
+                {
+                    // you have already selected the starting node
+
+                    int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                    if (terminalIndex >= 0)
+                    {
+                        panelGraph.Controls.Clear();
+
+                        panelGraph.Refresh();
+
+                        panelGraph.BackColor = Color.Gray;
+
+                        Vertex end = CurrentGraph.Vertices[terminalIndex];
+
+                        SelectedNodes.Add(end);
+
+                        // TODO: user input to select weight
+                        Edge edge = new Edge(SelectedNodes[0], end, 1);
+                        SelectedNodes[0].Outdegree++;
+                        end.Indegree++;
+                        CurrentGraph.Edges.Add(edge);
+                        end.Edges.Add(edge);
+
+                        ShowGraph(CurrentGraph);
+
+                        CreateLinesBetweenNodes(CurrentGraph);
+
+                        ShowWeights(CurrentGraph);
+
+                        ResetTableWeightsSelected();
+
+                        SelectedNodes = new List<Vertex>();
+                    }
+                }
+            }
         }
 
         private void DrawRedLines(List<Edge> input)
         {
             SetUpGraphicsAndPen(CurrentGraph.IsDirected, out Graphics graphics, out Pen pen, Color.Red);
-            
+
             List<string> edgeNames = new List<string>();
 
             foreach (Edge edge in input)
@@ -661,6 +778,38 @@ namespace GraphsClassProjectTakeTwo
                 ResetTableWeightsSelected();
 
                 MessageBox.Show("Click on the label near the node that you want to remove");
+            }
+        }
+
+        private void RemoveEdge_Click(object sender, EventArgs e)
+        {
+            CurrentGraphOperation = GraphOptions.REMOVE_EDGE;
+
+            if (CurrentGraph != null)
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                SelectedNodes = new List<Vertex>();
+
+                ResetTableWeightsSelected();
+
+                MessageBox.Show("Click on the label near the starting node that you want to remove");
+            }
+        }
+
+        private void AddEdge_Click(object sender, EventArgs e)
+        {
+            CurrentGraphOperation = GraphOptions.ADD_EDGE;
+
+            if (CurrentGraph != null)
+            {
+                CreateLinesBetweenNodes(CurrentGraph);
+
+                SelectedNodes = new List<Vertex>();
+
+                ResetTableWeightsSelected();
+
+                MessageBox.Show("Click on the label near the starting node that you want to add an edge to");
             }
         }
     }

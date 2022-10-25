@@ -125,6 +125,7 @@
             this.removeEdge.TabIndex = 4;
             this.removeEdge.Text = "Remove Edge";
             this.removeEdge.UseVisualStyleBackColor = true;
+            this.removeEdge.Click += new System.EventHandler(this.RemoveEdge_Click);
             // 
             // removeNode
             // 
@@ -146,6 +147,7 @@
             this.addEdge.TabIndex = 6;
             this.addEdge.Text = "Add Edge";
             this.addEdge.UseVisualStyleBackColor = true;
+            this.addEdge.Click += new System.EventHandler(this.AddEdge_Click);
             // 
             // GraphProject
             // 

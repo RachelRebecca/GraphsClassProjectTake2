@@ -10,7 +10,7 @@ namespace GraphsClassProjectTakeTwo
     public partial class Graph
     {
         public List<Vertex> Dijkstra(Vertex source, Vertex target, out double shortestDistance)
-        {
+        { 
 
             // Has to be weighted (directed or undirected)
             if (!this.IsWeighted) throw new Exception("forbidden algorithm attempt");
