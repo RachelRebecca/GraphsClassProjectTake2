@@ -406,241 +406,273 @@ namespace GraphsClassProjectTakeTwo
             Label label = (Label)sender;
             if (CurrentGraphOperation == GraphOptions.PRIM)
             {
+                PrimLabelClick(label);
+
+            }
+            else if (CurrentGraphOperation == GraphOptions.DIJKSTRA)
+            {
+                DijkstraLabelClick(label);
+
+            }
+            else if (CurrentGraphOperation == GraphOptions.REMOVE_NODE)
+            {
+                RemoveNodeLabelClick(label);
+            }
+            else if (CurrentGraphOperation == GraphOptions.REMOVE_EDGE)
+            {
+                RemoveEdgeLabelClick(label);
+            }
+            else if (CurrentGraphOperation == GraphOptions.ADD_EDGE)
+            {
+                AddEdgeLabelClick(label);
+            }
+        }
+
+        private void AddEdgeLabelClick(Label label)
+        {
+            Vertex start = SelectedNodes[0];
+            Vertex end = SelectedNodes[1];
+            if (SelectedNodes[0] == null)
+            {
+                int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                if (initialIndex >= 0)
+                {
+                    start = CurrentGraph.Vertices[initialIndex];
+
+                    SelectedNodes[0] = start;
+
+                    MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to add");
+                }
+
+                else
+                {
+                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                }
+
+            }
+            else if (SelectedNodes[1] == null)
+            {
+                // you have already selected the starting node
+
+                int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                if (terminalIndex >= 0)
+                {
+                    ResetPanel();
+
+                    end = CurrentGraph.Vertices[terminalIndex];
+
+                    SelectedNodes[1] = end;
+
+                    // TODO: user input to select weight
+                    Edge edge = new Edge(start, end, 1);
+                    start.Outdegree++;
+                    end.Indegree++;
+                    CurrentGraph.Edges.Add(edge);
+                    end.Edges.Add(edge);
+
+                    ResetForm();
+                }
+            }
+        }
+
+        private void RemoveEdgeLabelClick(Label label)
+        {
+            Vertex start = SelectedNodes[0];
+            Vertex end = SelectedNodes[1];
+            if (SelectedNodes[0] == null)
+            {
+                int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                if (initialIndex >= 0)
+                {
+                    start = CurrentGraph.Vertices[initialIndex];
+
+                    SelectedNodes[0] = start;
+
+                    MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to remove");
+                }
+
+
+                else
+                {
+                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                }
+
+            }
+            else if (SelectedNodes[1] == null)
+            {
+                // you have already selected the starting node
+
+                int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                if (terminalIndex >= 0)
+                {
+                    ResetPanel();
+
+                    end = CurrentGraph.Vertices[terminalIndex];
+
+                    SelectedNodes[1] = end;
+
+                    Edge edge = CurrentGraph.Edges.Find(edg => (edg.Start.Name.Equals(start.Name) && edg.End.Name.Equals(end.Name))
+                    || (!CurrentGraph.IsDirected && edg.End.Name.Equals(start.Name) && edg.Start.Name.Equals(end.Name)));
+
+                    if (edge != null)
+                    {
+                        edge.Start.Indegree--;
+                        edge.End.Indegree++;
+                        edge.End.Edges.Remove(edge);
+                        CurrentGraph.Edges.Remove(edge);
+                    }
+
+
+                    ResetForm();
+                }
+            }
+        }
+
+        private void RemoveNodeLabelClick(Label label)
+        {
+            int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+            if (initialIndex < 0)
+            {
+                MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+            }
+            else
+            {
+                ResetPanel();
+
+                Vertex nodeToBeDeleted = CurrentGraph.Vertices[initialIndex];
+                nodeToBeDeleted.Outdegree = 0;
+                nodeToBeDeleted.Indegree = 0;
+
+                List<Edge> edgesToBeRemoved = new List<Edge>();
+
+                foreach (Edge edge in CurrentGraph.Edges)
+                {
+                    if (edge.Start.Equals(nodeToBeDeleted))
+                    {
+                        edgesToBeRemoved.Add(edge);
+                        edge.End.Indegree--;
+                        Edge deletedEdge = edge.End.Edges.Find(edg => edg.Start.Equals(nodeToBeDeleted) || edg.End.Equals(nodeToBeDeleted));
+                        edge.End.Edges.Remove(deletedEdge);
+                    }
+                    else if (edge.End.Equals(nodeToBeDeleted))
+                    {
+                        edgesToBeRemoved.Add(edge);
+                        edge.Start.Outdegree--;
+                    }
+
+                }
+
+                CurrentGraph.Vertices.Remove(nodeToBeDeleted);
+                nodeToBeDeleted.Edges.Clear();
+                CurrentGraph.Edges.RemoveAll(edge => edgesToBeRemoved.Contains(edge));
+
+                ResetForm();
+
+            }
+        }
+
+        private void DijkstraLabelClick(Label label)
+        {
+            Vertex start = SelectedNodes[0];
+            Vertex end = SelectedNodes[1];
+
+            if (SelectedNodes[0] == null)
+            {
+                // you haven't yet selected a node
+
                 CreateLinesBetweenNodes(CurrentGraph);
 
                 ResetTableWeightsSelected();
 
                 int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
 
-                if (initialIndex < 0)
+                if (initialIndex >= 0)
                 {
-                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                    start = CurrentGraph.Vertices[initialIndex];
+
+                    SelectedNodes[0] = start;
+
+                    MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node you want to use for the algorithm");
                 }
                 else
                 {
-                    Vertex start = CurrentGraph.Vertices[initialIndex];
+                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+                }
+
+            }
+            else if (SelectedNodes[1] == null)
+            {
+                // you have already selected the starting node
+
+                int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+                if (terminalIndex >= 0)
+                {
+                    end = CurrentGraph.Vertices[terminalIndex];
+
+                    SelectedNodes[1] = end;
 
                     try
                     {
-                        List<Edge> output = CurrentGraph.Prim(start);
+                        List<Vertex> output = CurrentGraph.Dijkstra(start, end, out double shortestDistance);
 
-                        // draw minimum spanning graph edges in red
-                        DrawRedLines(output);
+                        // Draw path one by one using red lines
+                        DrawRedLines(output, 500);
+
+                        MessageBox.Show("Shortest distance: " + shortestDistance);
                     }
                     catch (Exception exception)
                     {
                         MessageBox.Show(exception.Message);
-                        Console.WriteLine(exception.StackTrace);
-                    }
-                }
-
-            }
-            else if (CurrentGraphOperation == GraphOptions.DIJKSTRA)
-            {
-                if (SelectedNodes[0] == null)
-                {
-                    // you haven't yet selected a node
-
-                    CreateLinesBetweenNodes(CurrentGraph);
-
-                    ResetTableWeightsSelected();
-
-                    int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                    if (initialIndex >= 0)
-                    {
-                        Vertex start = CurrentGraph.Vertices[initialIndex];
-
-                        SelectedNodes[0] = start;
-
-                        MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node you want to use for the algorithm");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Something went wrong, the Vertex couldn't be found");
                     }
 
-                }
-                else if (SelectedNodes[1] == null)
-                {
-                    // you have already selected the starting node
-
-                    int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                    if (terminalIndex >= 0)
-                    {
-                        Vertex end = CurrentGraph.Vertices[terminalIndex];
-
-                        SelectedNodes[1] = end;
-
-                        try
-                        {
-                            List<Vertex> output = CurrentGraph.Dijkstra(SelectedNodes[0], end, out double shortestDistance);
-
-                            // Draw path one by one using red lines
-                            DrawRedLines(output, 500);
-
-                            MessageBox.Show("Shortest distance: " + shortestDistance);
-                        }
-                        catch (Exception exception)
-                        {
-                            MessageBox.Show(exception.Message);
-                        }
-
-                        SelectedNodes = new Vertex[] { null, null };
-
-                    }
-                    else
-                    {
-                        MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-                    }
+                    SelectedNodes = new Vertex[] { null, null };
 
                 }
                 else
-                {
-                    // do nothing, we only care about the starting and ending node
-                }
-
-            }
-            else if (CurrentGraphOperation == GraphOptions.REMOVE_NODE)
-            {
-                int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                if (initialIndex < 0)
                 {
                     MessageBox.Show("Something went wrong, the Vertex couldn't be found");
                 }
-                else
-                {
-                    ResetPanel();
 
-                    Vertex nodeToBeDeleted = CurrentGraph.Vertices[initialIndex];
-                    nodeToBeDeleted.Outdegree = 0;
-                    nodeToBeDeleted.Indegree = 0;
-
-                    List<Edge> edgesToBeRemoved = new List<Edge>();
-
-                    foreach (Edge edge in CurrentGraph.Edges)
-                    {
-                        if (edge.Start.Equals(nodeToBeDeleted))
-                        {
-                            edgesToBeRemoved.Add(edge);
-                            edge.End.Indegree--;
-                            Edge deletedEdge = edge.End.Edges.Find(edg => edg.Start.Equals(nodeToBeDeleted) || edg.End.Equals(nodeToBeDeleted));
-                            edge.End.Edges.Remove(deletedEdge);
-                        }
-                        else if (edge.End.Equals(nodeToBeDeleted))
-                        {
-                            edgesToBeRemoved.Add(edge);
-                            edge.Start.Outdegree--;
-                        }
-
-                    }
-
-                    CurrentGraph.Vertices.Remove(nodeToBeDeleted);
-                    nodeToBeDeleted.Edges.Clear();
-                    CurrentGraph.Edges.RemoveAll(edge => edgesToBeRemoved.Contains(edge));
-
-                    ResetForm();
-
-                }
             }
-            else if (CurrentGraphOperation == GraphOptions.REMOVE_EDGE)
+            else
             {
-                if (SelectedNodes[0] == null)
-                {
-                    int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                    if (initialIndex >= 0)
-                    {
-                        Vertex start = CurrentGraph.Vertices[initialIndex];
-
-                        SelectedNodes[0] = start;
-
-                        MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to remove");
-                    }
-
-
-                    else
-                    {
-                        MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-                    }
-
-                }
-                else if (SelectedNodes[1] == null)
-                {
-                    // you have already selected the starting node
-
-                    int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                    if (terminalIndex >= 0)
-                    {
-                        ResetPanel();
-
-                        Vertex end = CurrentGraph.Vertices[terminalIndex];
-
-                        SelectedNodes[1] = end;
-
-                        Edge edge = CurrentGraph.Edges.Find(edg => (edg.Start.Name.Equals(SelectedNodes[0].Name) && edg.End.Name.Equals(end.Name))
-                        || (!CurrentGraph.IsDirected && edg.End.Name.Equals(SelectedNodes[0].Name) && edg.Start.Name.Equals(end.Name)));
-
-                        if (edge != null)
-                        {
-                            edge.Start.Indegree--;
-                            edge.End.Indegree++;
-                            edge.End.Edges.Remove(edge);
-                            CurrentGraph.Edges.Remove(edge);
-                        }
-
-
-                        ResetForm();
-                    }
-                }
+                // do nothing, we only care about the starting and ending node
             }
-            else if (CurrentGraphOperation == GraphOptions.ADD_EDGE)
+        }
+
+        private void PrimLabelClick(Label label)
+        {
+            CreateLinesBetweenNodes(CurrentGraph);
+
+            ResetTableWeightsSelected();
+
+            int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+            if (initialIndex < 0)
             {
-                if (SelectedNodes[0] == null)
+                MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+            }
+            else
+            {
+                Vertex start = CurrentGraph.Vertices[initialIndex];
+
+                try
                 {
-                    int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+                    List<Edge> output = CurrentGraph.Prim(start);
 
-                    if (initialIndex >= 0)
-                    {
-                        Vertex start = CurrentGraph.Vertices[initialIndex];
-
-                        SelectedNodes[0] = start;
-
-                        MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to add");
-                    }
-
-                    else
-                    {
-                        MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-                    }
-
+                    // draw minimum spanning graph edges in red
+                    DrawRedLines(output);
                 }
-                else if (SelectedNodes[1] == null)
+                catch (Exception exception)
                 {
-                    // you have already selected the starting node
-
-                    int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                    if (terminalIndex >= 0)
-                    {
-                        ResetPanel();
-
-                        Vertex end = CurrentGraph.Vertices[terminalIndex];
-
-                        SelectedNodes[1] = end;
-
-                        // TODO: user input to select weight
-                        Edge edge = new Edge(SelectedNodes[0], end, 1);
-                        SelectedNodes[0].Outdegree++;
-                        end.Indegree++;
-                        CurrentGraph.Edges.Add(edge);
-                        end.Edges.Add(edge);
-
-                        ResetForm();
-                    }
+                    MessageBox.Show(exception.Message);
+                    Console.WriteLine(exception.StackTrace);
                 }
             }
         }
