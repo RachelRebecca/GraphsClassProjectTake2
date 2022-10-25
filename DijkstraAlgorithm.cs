@@ -31,7 +31,11 @@ namespace GraphsClassProjectTakeTwo
 
             while (currNode.Vertex != target)
             {
-                foreach (Edge edge in currNode.Vertex.Edges)
+                var currentEdgesForUndirected = Edges.Where(e => e.Start.Equals(currNode.Vertex) || e.End.Equals(currNode.Vertex));
+
+                var currentEdgesForDirected = Edges.Where(e => e.Start.Equals(currNode.Vertex));
+
+                foreach (Edge edge in IsDirected ? currentEdgesForDirected : currentEdgesForUndirected)
                 {
                     // TODO: refactor, this is used in Prim
                     Vertex neighbor = edge.Start.Equals(currNode.Vertex) ? edge.End : edge.Start;
@@ -40,12 +44,11 @@ namespace GraphsClassProjectTakeTwo
                 }
 
                 currNode = GetNewCurrNode(vertexAndStruct, currNode);
-
-                path = UpdatePath(path, source, vertexAndStruct, currNode);
-
-                shortestDistance = currNode.DistanceFromStart;
-
             }
+            
+            path = UpdatePath(path, source, vertexAndStruct, currNode);
+
+            shortestDistance = currNode.DistanceFromStart;
 
             return path;
         }
@@ -78,7 +81,9 @@ namespace GraphsClassProjectTakeTwo
 
             currStruct = vertexStructs[neighbor];
 
-            Edge edge = Edges.Find(e => (e.Start.Equals(currNode.Vertex) && e.End.Equals(neighbor)) ||
+            Edge edge = IsDirected ?
+                Edges.Find(e => e.Start.Equals(currNode.Vertex) && e.End.Equals(neighbor)) :
+                Edges.Find(e => (e.Start.Equals(currNode.Vertex) && e.End.Equals(neighbor)) ||
                                                        (e.Start.Equals(neighbor) && e.End.Equals(currNode.Vertex)));
 
             newDistance = vertexStructs[currNode.Vertex].DistanceFromStart + edge.Weight;
