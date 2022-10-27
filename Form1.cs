@@ -99,6 +99,15 @@ namespace GraphsClassProjectTakeTwo
 
         private void btn_Click(object sender, EventArgs e)
         {
+            if (CurrentGraph != null)
+            {
+                foreach (Control ctrl in panelGraphButtons.Controls)
+                {
+                    ctrl.BackColor = Button.DefaultBackColor;
+                    ctrl.ForeColor = Button.DefaultForeColor;
+                }
+            }
+
             panelGraph.Controls.Clear();
 
             panelGraph.Refresh();
@@ -106,6 +115,9 @@ namespace GraphsClassProjectTakeTwo
             panelGraph.BackColor = Color.Gray;
 
             Button button = (Button)sender;
+
+            button.BackColor = Color.LightPink;
+            button.ForeColor = Color.White;
 
             Graph graph = new Graph(button.Name, sqlCon);
 
@@ -164,9 +176,9 @@ namespace GraphsClassProjectTakeTwo
             tableEdgesWeights.DataSource = table;
         }
 
-        private void Form_MouseMove(object sender, MouseEventArgs e)
+        private void GraphOperations_MouseMove(object sender, MouseEventArgs e)
         {
-            Control ctrl = this.GetChildAtPoint(e.Location);
+            Control ctrl = ((Panel)sender).GetChildAtPoint(e.Location);
             List<Control> algorithms = new List<Control>() { Dijkstra, Prim, Kruskal, Topological };
             List<Control> graphOperations = new List<Control>() { removeEdge, addEdge, removeNode };
             if (ctrl != null && algorithms.Contains(ctrl) && !ctrl.Enabled)
@@ -474,7 +486,22 @@ namespace GraphsClassProjectTakeTwo
                     SelectedNodes[1] = end;
 
                     // TODO: user input to select weight
-                    Edge edge = new Edge(start, end, 1);
+                    double weight = 1;
+                    if (CurrentGraph.IsWeighted)
+                    {
+                        String promptValue = Prompt.ShowDialog("Enter weight of the new edge", "Add Edge Weight");
+                        if (Double.TryParse(promptValue, out double result))
+                        {
+                            weight = result;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Couldn't successfully save the weight of the edge, using the default (weight = 1)");
+                        }
+
+                    }
+
+                    Edge edge = new Edge(start, end, weight);
                     start.Outdegree++;
                     end.Indegree++;
                     CurrentGraph.Edges.Add(edge);
@@ -814,7 +841,7 @@ namespace GraphsClassProjectTakeTwo
         {
             CurrentGraphOperation = GraphOptions.REMOVE_EDGE;
 
-            DoGraphOperation("starting node of the edge that you want to remove");
+            DoGraphOperation("starting node of the edge that you want to remove\nOr click on the edge in the Edges-Weights table");
 
         }
 
