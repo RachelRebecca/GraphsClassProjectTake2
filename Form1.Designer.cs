@@ -112,6 +112,7 @@
             this.tableEdgesWeights.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.tableEdgesWeights.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tableEdgesWeights.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.tableEdgesWeights.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.tableEdgesWeights.Location = new System.Drawing.Point(634, 359);
             this.tableEdgesWeights.Name = "tableEdgesWeights";
             this.tableEdgesWeights.Size = new System.Drawing.Size(194, 250);

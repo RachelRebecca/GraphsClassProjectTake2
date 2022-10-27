@@ -21,7 +21,7 @@ namespace GraphsClassProjectTakeTwo
 
             foundVertices.Add(start);
 
-            var startEdges = Edges.Where(e => (e.Start.Equals(start) || e.End.Equals(start)));
+            var startEdges = Edges.Where(e => e.Start.Equals(start) || e.End.Equals(start));
 
             // add prims for all neighbors of start
             foreach (Edge edge in startEdges)

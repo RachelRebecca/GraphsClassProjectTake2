@@ -204,7 +204,7 @@ namespace GraphsClassProjectTakeTwo
             CreateLinesBetweenNodes(CurrentGraph);
 
             DataGridView dgv = (DataGridView)sender;
-            if (dgv != null && dgv.CurrentRow.Selected)
+            if (dgv != null && dgv.Rows.Count > 0 && dgv.CurrentRow.Selected)
             {
                 DataTable table = (DataTable)dgv.DataSource;
                 String edgeInTable = (String)(table.Rows[dgv.CurrentRow.Index]["Edges"]);
@@ -344,15 +344,22 @@ namespace GraphsClassProjectTakeTwo
 
                 ResetTableWeightsSelected();
 
-                try
+                if (!CurrentGraph.IsConnected())
                 {
-                    List<Edge> edges = CurrentGraph.Kruskal();
-                    // draw minimum spanning graph edges in red
-                    DrawRedLines(edges);
+                    MessageBox.Show("Graph is either empty or not connected");
                 }
-                catch (Exception exception)
+                else
                 {
-                    MessageBox.Show(exception.Message);
+                    try
+                    {
+                        List<Edge> edges = CurrentGraph.Kruskal();
+                        // draw minimum spanning graph edges in red
+                        DrawRedLines(edges);
+                    }
+                    catch (Exception exception)
+                    {
+                        MessageBox.Show(exception.Message);
+                    }
                 }
             }
         }
@@ -363,28 +370,35 @@ namespace GraphsClassProjectTakeTwo
 
             if (CurrentGraph != null && CurrentGraph.IsDirected)
             {
-                CreateLinesBetweenNodes(CurrentGraph);
-
-                ResetTableWeightsSelected();
-
-                string topologicalOutput = "";
-
-                try
+                if (CurrentGraph.Vertices.Count == 0)
                 {
-                    List<Vertex> output = CurrentGraph.TopologicalSort();
+                    MessageBox.Show("Graph is empty");
+                }
+                else
+                {
+                    CreateLinesBetweenNodes(CurrentGraph);
 
+                    ResetTableWeightsSelected();
 
-                    foreach (Vertex vertex in output)
+                    string topologicalOutput = "";
+
+                    try
                     {
-                        topologicalOutput += vertex.Name + " ";
-                    }
-                }
-                catch (Exception exception)
-                {
-                    topologicalOutput = exception.Message;
-                }
+                        List<Vertex> output = CurrentGraph.TopologicalSort();
 
-                MessageBox.Show("Topological sort of " + CurrentGraph.Name + ":\n\n" + topologicalOutput);
+
+                        foreach (Vertex vertex in output)
+                        {
+                            topologicalOutput += vertex.Name + " ";
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        topologicalOutput = exception.Message;
+                    }
+
+                    MessageBox.Show("Topological sort of " + CurrentGraph.Name + ":\n\n" + topologicalOutput);
+                }
 
             }
         }
@@ -399,7 +413,14 @@ namespace GraphsClassProjectTakeTwo
 
                 ResetTableWeightsSelected();
 
-                MessageBox.Show("Click on the label near the node that you want to use for the algorithm");
+                if (!CurrentGraph.IsConnected())
+                {
+                    MessageBox.Show("Graph is either empty or not connected.");
+                }
+                else
+                {
+                    MessageBox.Show("Click on the label near the node that you want to use for the algorithm");
+                }
             }
 
         }
@@ -412,12 +433,18 @@ namespace GraphsClassProjectTakeTwo
 
             if (CurrentGraph != null && CurrentGraph.IsWeighted)
             {
-                CreateLinesBetweenNodes(CurrentGraph);
+                if (CurrentGraph.Vertices.Count == 0)
+                {
+                    MessageBox.Show("Graph is empty");
+                }
+                else
+                {
+                    CreateLinesBetweenNodes(CurrentGraph);
 
-                ResetTableWeightsSelected();
+                    ResetTableWeightsSelected();
 
-                MessageBox.Show("Click on the label near the starting node that you want to use for the algorithm");
-
+                    MessageBox.Show("Click on the label near the starting node that you want to use for the algorithm");
+                }
             }
         }
 
@@ -479,8 +506,6 @@ namespace GraphsClassProjectTakeTwo
 
                 if (terminalIndex >= 0)
                 {
-                    ResetPanel();
-
                     end = CurrentGraph.Vertices[terminalIndex];
 
                     SelectedNodes[1] = end;
@@ -501,11 +526,14 @@ namespace GraphsClassProjectTakeTwo
 
                     }
 
+                    ResetPanel();
+
                     Edge edge = new Edge(start, end, weight);
                     start.Outdegree++;
                     end.Indegree++;
                     CurrentGraph.Edges.Add(edge);
                     end.Edges.Add(edge);
+
 
                     ResetForm();
                 }
