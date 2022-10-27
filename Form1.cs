@@ -197,14 +197,22 @@ namespace GraphsClassProjectTakeTwo
                 DataTable table = (DataTable)dgv.DataSource;
                 String edgeInTable = (String)(table.Rows[dgv.CurrentRow.Index]["Edges"]);
                 Edge edge = CurrentGraph.Edges.Find(e => (e.Start.Name + e.End.Name).Equals(edgeInTable) || (e.End.Name + e.Start.Name).Equals(edgeInTable));
-                if (edge != null)
-                {
-                    SetUpGraphicsAndPen(CurrentGraph.IsDirected, out Graphics graphics, out Pen pen, Color.Yellow);
-                    pen.Width = 1;
 
-                    Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
-                    Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
-                    graphics.DrawLine(pen, initialLocation, terminalLocation);
+                if (CurrentGraphOperation == GraphOptions.REMOVE_EDGE)
+                {
+                    RemoveEdgeTableClick(edge);
+                }
+                else
+                {
+                    if (edge != null)
+                    {
+                        SetUpGraphicsAndPen(CurrentGraph.IsDirected, out Graphics graphics, out Pen pen, Color.Yellow);
+                        pen.Width = 1;
+
+                        Point initialLocation = new Point((int)(edge.Start.XCoord * panelGraph.Width), (int)(edge.Start.YCoord * panelGraph.Height));
+                        Point terminalLocation = new Point((int)(edge.End.XCoord * panelGraph.Width), (int)(edge.End.YCoord * panelGraph.Height));
+                        graphics.DrawLine(pen, initialLocation, terminalLocation);
+                    }
                 }
             }
 
@@ -388,7 +396,7 @@ namespace GraphsClassProjectTakeTwo
         {
             CurrentGraphOperation = GraphOptions.DIJKSTRA;
 
-            SelectedNodes = new Vertex[] {null, null};
+            SelectedNodes = new Vertex[] { null, null };
 
             if (CurrentGraph != null && CurrentGraph.IsWeighted)
             {
@@ -529,6 +537,25 @@ namespace GraphsClassProjectTakeTwo
 
                     ResetForm();
                 }
+            }
+        }
+
+        private void RemoveEdgeTableClick(Edge edge)
+        {
+            if (edge != null)
+            {
+                ResetPanel();
+
+                edge.Start.Indegree--;
+                edge.End.Indegree++;
+                edge.End.Edges.Remove(edge);
+                CurrentGraph.Edges.Remove(edge);
+
+                ResetForm();
+            }
+            else
+            {
+                MessageBox.Show("Something went wrong, edge couldn't be found.");
             }
         }
 
