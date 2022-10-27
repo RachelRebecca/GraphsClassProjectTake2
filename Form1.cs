@@ -581,13 +581,13 @@ namespace GraphsClassProjectTakeTwo
 
                     if (edge != null)
                     {
-                        edge.Start.Indegree--;
-                        edge.End.Indegree++;
+                        edge.Start.Outdegree--;
+                        edge.End.Indegree--;
                         edge.End.Edges.Remove(edge);
                         CurrentGraph.Edges.Remove(edge);
                     }
-
-
+                    // i0o1 i101 i1o0
+                    // A -> B -> C
                     ResetForm();
                 }
             }
@@ -599,8 +599,8 @@ namespace GraphsClassProjectTakeTwo
             {
                 ResetPanel();
 
-                edge.Start.Indegree--;
-                edge.End.Indegree++;
+                edge.Start.Outdegree--;
+                edge.End.Indegree--;
                 edge.End.Edges.Remove(edge);
                 CurrentGraph.Edges.Remove(edge);
 
@@ -636,8 +636,7 @@ namespace GraphsClassProjectTakeTwo
                     {
                         edgesToBeRemoved.Add(edge);
                         edge.End.Indegree--;
-                        Edge deletedEdge = edge.End.Edges.Find(edg => edg.Start.Equals(nodeToBeDeleted) || edg.End.Equals(nodeToBeDeleted));
-                        edge.End.Edges.Remove(deletedEdge);
+                        edge.End.Edges.Remove(edge);
                     }
                     else if (edge.End.Equals(nodeToBeDeleted))
                     {

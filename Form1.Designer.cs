@@ -56,7 +56,7 @@
             this.panelGraph.BackColor = System.Drawing.Color.Gray;
             this.panelGraph.Location = new System.Drawing.Point(12, 12);
             this.panelGraph.Name = "panelGraph";
-            this.panelGraph.Size = new System.Drawing.Size(600, 535);
+            this.panelGraph.Size = new System.Drawing.Size(600, 540);
             this.panelGraph.TabIndex = 0;
             // 
             // Topological
@@ -161,7 +161,7 @@
             this.panelGraphOperations.Controls.Add(this.Prim);
             this.panelGraphOperations.Controls.Add(this.Dijkstra);
             this.panelGraphOperations.Controls.Add(this.Kruskal);
-            this.panelGraphOperations.Location = new System.Drawing.Point(12, 543);
+            this.panelGraphOperations.Location = new System.Drawing.Point(12, 553);
             this.panelGraphOperations.Name = "panelGraphOperations";
             this.panelGraphOperations.Size = new System.Drawing.Size(600, 86);
             this.panelGraphOperations.TabIndex = 7;
@@ -173,7 +173,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.ClientSize = new System.Drawing.Size(837, 631);
+            this.ClientSize = new System.Drawing.Size(837, 643);
             this.Controls.Add(this.panelGraphOperations);
             this.Controls.Add(this.tableEdgesWeights);
             this.Controls.Add(this.panelGraph);
