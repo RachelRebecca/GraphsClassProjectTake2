@@ -13,7 +13,7 @@ namespace GraphsClassProjectTakeTwo
     {
         public SqlConnection sqlCon;
 
-        public List<String> GraphNames { get; set; } // Stored Procedure needs to split into two : one for names, and one that returns flags for each name
+        public List<String> GraphNames { get; set; }
 
         public List<Button> GraphNameButtons { get; set; }
 
@@ -38,8 +38,6 @@ namespace GraphsClassProjectTakeTwo
             GraphNameButtons = new List<Button>();
 
             SetUpGraphNameButtons();
-
-            //todo: getdata should actually happen when clicking on a specific graph name
         }
 
         public SqlConnection MakeSQLConnection()

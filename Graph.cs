@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
-using System.ComponentModel;
 
 namespace GraphsClassProjectTakeTwo
 {
     public partial class Graph
     {
-        // fields
         public String Name { get; set; }
 
         public bool IsWeighted { get; set; }
@@ -18,9 +16,9 @@ namespace GraphsClassProjectTakeTwo
 
         public List<Vertex> Vertices { get; set; }
 
-        public List<Edge> Edges { get; set; } // TODO: only edge list?
+        public List<Edge> Edges { get; set; }
 
-        // constructor
+        // TODO: Refactor the Edges.Where and Edges.Find methods 
         public Graph(String name, SqlConnection sqlCon)
         {
             this.Name = name;
@@ -29,8 +27,6 @@ namespace GraphsClassProjectTakeTwo
             LoadGraph(sqlCon);
         }
 
-
-        // methods
         public bool LoadGraph(SqlConnection sqlCon)
         {
             bool retVal = true;
@@ -115,12 +111,6 @@ namespace GraphsClassProjectTakeTwo
                     Edge newEdge = new Edge(initial, terminal, weight); // weight = 1 for unweighted and database weights for weighted
                     Edges.Add(newEdge);
 
-                    /*if (!IsDirected)
-                    {
-                        Edge newEdge2 = new Edge(terminal, initial, weight); // weight = 1 for unweighted and database weights for weighted
-                        Edges.Add(newEdge2);
-                    }*/
-
                     if (initialIndex < 0 && terminalIndex < 0)
                     {
                         // neither exist - create both, add edge between them
@@ -157,29 +147,11 @@ namespace GraphsClassProjectTakeTwo
 
         public bool IsConnected()
         {
-            // boolean array called InDirection1 with size of Vertices.Count
-            // boolean array called InDirection2 with size of Vertices.Count
-
-            // select Vertices[0], InDirection1[0] = true
-            // make Queue<Vertex> Neighbors add all of the neighbors that Vertices[0] is pointing to to Neighbors
-            // while InDirection1 Contains false:
-            // if Neighbors.Count == 0, break
-            // dequeue Neighbors[0] - if (InDirection1[Vertices.IndexOf(neighbor)]) continue
-            // else InDirection1[Vertices.IndexOf(neighbor) = true, enqueue all neighbors it's pointing to
-
-            // Fill InDirection2 in the same way, but with all neighbors pointing to given vertex (separate while loop)
-
-            // if (IsDirected), graph is not connected if there is any index for which both InDirection1 and InDirection2 are false
-            // if (!IsDirected), graph is not connected if there is any index for which either InDirection1 or InDirection2 is false
-
-            // initialized to false 
-
             bool IsConnected = false;
 
             if (Vertices.Count > 0)
             {
-
-
+                // initialized to false
                 bool[] InDirection1 = new bool[Vertices.Count];
                 bool[] InDirection2 = new bool[Vertices.Count];
 
