@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms.VisualStyles;
+using System.Security.Cryptography;
 
 namespace GraphsClassProjectTakeTwo
 {
@@ -143,128 +145,6 @@ namespace GraphsClassProjectTakeTwo
             }
 
             return retVal;
-        }
-
-        public bool IsConnected()
-        {
-            bool IsConnected = false;
-
-            if (Vertices.Count > 0)
-            {
-                List<Edge> edges = new List<Edge>();
-                foreach (Edge edge in Edges)
-                { 
-                    if (IsDirected)
-                    {
-                        edges.Add(edge);
-                    }
-                    else
-                    {
-                        edges.Add(edge);
-                        edges.Add(new Edge(edge.End, edge.Start, edge.Weight));
-                    }
-                }
-
-
-                // initialized to false
-                bool[] InDirection1 = new bool[Vertices.Count];
-                bool[] InDirection2 = new bool[Vertices.Count];
-
-                // InDirection1: 
-                Queue<Vertex> Neighbors = new Queue<Vertex>();
-                Vertex currentVertex = Vertices[0];
-
-                InDirection1[0] = true;
-
-                var startEdges = edges.Where(e => e.End.Equals(currentVertex));
-                foreach (Edge edge in startEdges)
-                {
-                    Neighbors.Enqueue(edge.Start);
-                }
-
-                while (InDirection1.Contains(false))
-                {
-                    if (Neighbors.Count == 0)
-                    {
-                        break;
-                    }
-                    currentVertex = Neighbors.Dequeue();
-                    if (InDirection1[Vertices.IndexOf(currentVertex)])
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        InDirection1[Vertices.IndexOf(currentVertex)] = true;
-                        startEdges = edges.Where(e => e.End.Equals(currentVertex));
-                        foreach (Edge edge in startEdges)
-                        {
-                            Neighbors.Enqueue(edge.Start);
-                        }
-                    }
-                }
-
-                //InDirection2: 
-                Neighbors = new Queue<Vertex>();
-                currentVertex = Vertices[0];
-                InDirection2[0] = true;
-
-                startEdges = edges.Where(e => e.Start.Equals(currentVertex));
-
-                foreach (Edge edge in startEdges)
-                {
-                    Neighbors.Enqueue(edge.End);
-                }
-
-                while (InDirection2.Contains(false))
-                {
-                    if (Neighbors.Count == 0)
-                    {
-                        break;
-                    }
-                    currentVertex = Neighbors.Dequeue();
-                    if (InDirection2[Vertices.IndexOf(currentVertex)])
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        InDirection2[Vertices.IndexOf(currentVertex)] = true;
-                        startEdges = edges.Where(e => e.Start.Equals(currentVertex));
-                        foreach (Edge edge in startEdges)
-                        {
-                            Neighbors.Enqueue(edge.End);
-                        }
-
-                    }
-                }
-
-                IsConnected = true;
-
-                if (IsDirected)
-                {
-                    for (int i = 0; i < Vertices.Count; i++)
-                    {
-                        if (!InDirection1[i] && !InDirection2[i])
-                        {
-                            IsConnected = false;
-                            break;
-                        }
-                    }
-                }
-
-                else
-                {
-                    IsConnected = !(InDirection1.Contains(false) || InDirection2.Contains(false));
-                    for (int i = 0; i < Vertices.Count; i++)
-                    {
-                        Console.WriteLine("Vertex " + Vertices[i].Name + " Indirection1: " + InDirection1[i] + " Indirection 2: " + InDirection2[i]);
-                    }
-                }
-            }
-
-            return IsConnected;
-
         }
     }
 }

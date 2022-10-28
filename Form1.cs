@@ -84,7 +84,7 @@ namespace GraphsClassProjectTakeTwo
                 Button button = new Button();
                 button.Name = name; // All button names are unique because in the SQL code, graph names are unique
                 button.Text = name;
-                button.Click += new EventHandler(btn_Click);
+                button.Click += new EventHandler(GraphButton_Click);
                 button.Location = new Point(x, y);
                 GraphNameButtons.Add(button);
 
@@ -95,27 +95,13 @@ namespace GraphsClassProjectTakeTwo
             panelGraphButtons.Refresh();
         }
 
-        private void btn_Click(object sender, EventArgs e)
+        private void GraphButton_Click(object sender, EventArgs e)
         {
-            if (CurrentGraph != null)
-            {
-                foreach (Control ctrl in panelGraphButtons.Controls)
-                {
-                    ctrl.BackColor = Button.DefaultBackColor;
-                    ctrl.ForeColor = Button.DefaultForeColor;
-                }
-            }
-
-            panelGraph.Controls.Clear();
-
-            panelGraph.Refresh();
-
-            panelGraph.BackColor = Color.Gray;
+            ResetPanel();
 
             Button button = (Button)sender;
 
-            button.BackColor = Color.LightPink;
-            button.ForeColor = Color.White;
+            HighlightSelectedGraph(button);
 
             Graph graph = new Graph(button.Name, sqlCon);
 
@@ -130,15 +116,30 @@ namespace GraphsClassProjectTakeTwo
             ShowWeights(graph);
         }
 
+        private void HighlightSelectedGraph(Button button)
+        {
+            if (CurrentGraph != null)
+            {
+                foreach (Control ctrl in panelGraphButtons.Controls)
+                {
+                    ctrl.BackColor = Button.DefaultBackColor;
+                    ctrl.ForeColor = Button.DefaultForeColor;
+                }
+            }
+
+            button.BackColor = Color.LightPink;
+            button.ForeColor = Color.White;
+        }
+
         private void SetUpAlgorithmButtons(Graph graph)
         {
             Topological.Enabled = true;
             Kruskal.Enabled = true;
             Prim.Enabled = true;
             Dijkstra.Enabled = true;
-            removeEdge.Enabled = true;
-            removeNode.Enabled = true;
-            addEdge.Enabled = true;
+            RemoveEdge.Enabled = true;
+            RemoveNode.Enabled = true;
+            AddEdge.Enabled = true;
 
             if (!graph.IsWeighted)
             {
@@ -153,7 +154,6 @@ namespace GraphsClassProjectTakeTwo
             if (!CurrentGraph.IsDirected)
             {
                 Topological.Enabled = false;
-
             }
 
         }
@@ -177,17 +177,12 @@ namespace GraphsClassProjectTakeTwo
         private void GraphOperations_MouseMove(object sender, MouseEventArgs e)
         {
             Control ctrl = ((Panel)sender).GetChildAtPoint(e.Location);
-            List<Control> algorithms = new List<Control>() { Dijkstra, Prim, Kruskal, Topological };
-            List<Control> graphOperations = new List<Control>() { removeEdge, addEdge, removeNode };
-            if (ctrl != null && algorithms.Contains(ctrl) && !ctrl.Enabled)
+            List<Control> graphOperations = new List<Control>() { RemoveEdge, AddEdge, RemoveNode, Dijkstra, Prim, Kruskal, Topological };
+            if (ctrl != null && graphOperations.Contains(ctrl) && !ctrl.Enabled)
             {
-                toolTip.SetToolTip(ctrl, "This algorithm is not available.");
-                toolTip.Show(toolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
-                Console.WriteLine(toolTip);
-            }
-            else if (ctrl != null && graphOperations.Contains(ctrl) && !ctrl.Enabled)
-            {
-                toolTip.SetToolTip(ctrl, "This graph operation is not available.");
+                toolTip.SetToolTip(ctrl, CurrentGraph == null 
+                    ? "There is no graph being displayed yet" 
+                    : "This algorithm is unavailable for selected graph");
                 toolTip.Show(toolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
                 Console.WriteLine(toolTip);
             }
@@ -869,7 +864,7 @@ namespace GraphsClassProjectTakeTwo
 
                 ResetTableWeightsSelected();
 
-                MessageBox.Show("Click on the label near the " + operation);
+                MessageBox.Show(CurrentGraph.Vertices.Count == 0 ? "The graph is empty" : "Click on the label near the " + operation);
             }
         }
     }

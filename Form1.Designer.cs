@@ -35,9 +35,9 @@
             this.Dijkstra = new System.Windows.Forms.Button();
             this.Kruskal = new System.Windows.Forms.Button();
             this.tableEdgesWeights = new System.Windows.Forms.DataGridView();
-            this.removeEdge = new System.Windows.Forms.Button();
-            this.removeNode = new System.Windows.Forms.Button();
-            this.addEdge = new System.Windows.Forms.Button();
+            this.RemoveEdge = new System.Windows.Forms.Button();
+            this.RemoveNode = new System.Windows.Forms.Button();
+            this.AddEdge = new System.Windows.Forms.Button();
             this.panelGraphOperations = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.tableEdgesWeights)).BeginInit();
             this.panelGraphOperations.SuspendLayout();
@@ -119,44 +119,44 @@
             this.tableEdgesWeights.TabIndex = 3;
             this.tableEdgesWeights.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.TableWeights_CellClick);
             // 
-            // removeEdge
+            // RemoveEdge
             // 
-            this.removeEdge.Enabled = false;
-            this.removeEdge.Location = new System.Drawing.Point(90, 46);
-            this.removeEdge.Name = "removeEdge";
-            this.removeEdge.Size = new System.Drawing.Size(101, 23);
-            this.removeEdge.TabIndex = 4;
-            this.removeEdge.Text = "Remove Edge";
-            this.removeEdge.UseVisualStyleBackColor = true;
-            this.removeEdge.Click += new System.EventHandler(this.RemoveEdge_Click);
+            this.RemoveEdge.Enabled = false;
+            this.RemoveEdge.Location = new System.Drawing.Point(90, 46);
+            this.RemoveEdge.Name = "RemoveEdge";
+            this.RemoveEdge.Size = new System.Drawing.Size(101, 23);
+            this.RemoveEdge.TabIndex = 4;
+            this.RemoveEdge.Text = "Remove Edge";
+            this.RemoveEdge.UseVisualStyleBackColor = true;
+            this.RemoveEdge.Click += new System.EventHandler(this.RemoveEdge_Click);
             // 
-            // removeNode
+            // RemoveNode
             // 
-            this.removeNode.Enabled = false;
-            this.removeNode.Location = new System.Drawing.Point(256, 46);
-            this.removeNode.Name = "removeNode";
-            this.removeNode.Size = new System.Drawing.Size(96, 23);
-            this.removeNode.TabIndex = 5;
-            this.removeNode.Text = "Remove Node";
-            this.removeNode.UseVisualStyleBackColor = true;
-            this.removeNode.Click += new System.EventHandler(this.RemoveNode_Click);
+            this.RemoveNode.Enabled = false;
+            this.RemoveNode.Location = new System.Drawing.Point(256, 46);
+            this.RemoveNode.Name = "RemoveNode";
+            this.RemoveNode.Size = new System.Drawing.Size(96, 23);
+            this.RemoveNode.TabIndex = 5;
+            this.RemoveNode.Text = "Remove Node";
+            this.RemoveNode.UseVisualStyleBackColor = true;
+            this.RemoveNode.Click += new System.EventHandler(this.RemoveNode_Click);
             // 
-            // addEdge
+            // AddEdge
             // 
-            this.addEdge.Enabled = false;
-            this.addEdge.Location = new System.Drawing.Point(423, 46);
-            this.addEdge.Name = "addEdge";
-            this.addEdge.Size = new System.Drawing.Size(69, 23);
-            this.addEdge.TabIndex = 6;
-            this.addEdge.Text = "Add Edge";
-            this.addEdge.UseVisualStyleBackColor = true;
-            this.addEdge.Click += new System.EventHandler(this.AddEdge_Click);
+            this.AddEdge.Enabled = false;
+            this.AddEdge.Location = new System.Drawing.Point(423, 46);
+            this.AddEdge.Name = "AddEdge";
+            this.AddEdge.Size = new System.Drawing.Size(69, 23);
+            this.AddEdge.TabIndex = 6;
+            this.AddEdge.Text = "Add Edge";
+            this.AddEdge.UseVisualStyleBackColor = true;
+            this.AddEdge.Click += new System.EventHandler(this.AddEdge_Click);
             // 
             // panelGraphOperations
             // 
-            this.panelGraphOperations.Controls.Add(this.addEdge);
-            this.panelGraphOperations.Controls.Add(this.removeNode);
-            this.panelGraphOperations.Controls.Add(this.removeEdge);
+            this.panelGraphOperations.Controls.Add(this.AddEdge);
+            this.panelGraphOperations.Controls.Add(this.RemoveNode);
+            this.panelGraphOperations.Controls.Add(this.RemoveEdge);
             this.panelGraphOperations.Controls.Add(this.Topological);
             this.panelGraphOperations.Controls.Add(this.Prim);
             this.panelGraphOperations.Controls.Add(this.Dijkstra);
@@ -195,9 +195,9 @@
         private System.Windows.Forms.Button Dijkstra;
         private System.Windows.Forms.Button Kruskal;
         private System.Windows.Forms.DataGridView tableEdgesWeights;
-        private System.Windows.Forms.Button removeEdge;
-        private System.Windows.Forms.Button removeNode;
-        private System.Windows.Forms.Button addEdge;
+        private System.Windows.Forms.Button RemoveEdge;
+        private System.Windows.Forms.Button RemoveNode;
+        private System.Windows.Forms.Button AddEdge;
         private System.Windows.Forms.Panel panelGraphOperations;
     }
 }
