@@ -280,7 +280,6 @@ namespace GraphsClassProjectTakeTwo
                 Graphics graphics = panelGraph.CreateGraphics();
                 Pen pen = new Pen(Color.Black);
                 Point location = new Point((int)(graph.Vertices[nodeNumber].XCoord * panelGraph.Width), (int)(graph.Vertices[nodeNumber].YCoord * panelGraph.Height));
-                Console.WriteLine("graphic location: " + location + " node name: " + graph.Vertices[nodeNumber].Name);
                 graphics.DrawEllipse(pen, location.X - 5, location.Y - 5, 10, 10);
 
                 label.Location = GetNewXAndY(location);
@@ -479,21 +478,8 @@ namespace GraphsClassProjectTakeTwo
             Vertex end = SelectedNodes[1];
             if (SelectedNodes[0] == null)
             {
-                int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                if (initialIndex >= 0)
-                {
-                    start = CurrentGraph.Vertices[initialIndex];
-
-                    SelectedNodes[0] = start;
-
-                    MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to add");
-                }
-
-                else
-                {
-                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-                }
+                string message = "You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to add";
+                start = GetStart(label, start, message);
 
             }
             else if (SelectedNodes[1] == null)
@@ -544,23 +530,9 @@ namespace GraphsClassProjectTakeTwo
             Vertex end = SelectedNodes[1];
             if (SelectedNodes[0] == null)
             {
-                int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+                String message = "You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to remove";
 
-                if (initialIndex >= 0)
-                {
-                    start = CurrentGraph.Vertices[initialIndex];
-
-                    SelectedNodes[0] = start;
-
-                    MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to remove");
-                }
-
-
-                else
-                {
-                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-                }
-
+                GetStart(label, start, message);
             }
             else if (SelectedNodes[1] == null)
             {
@@ -586,8 +558,6 @@ namespace GraphsClassProjectTakeTwo
                         edge.End.Edges.Remove(edge);
                         CurrentGraph.Edges.Remove(edge);
                     }
-                    // i0o1 i101 i1o0
-                    // A -> B -> C
                     ResetForm();
                 }
             }
@@ -636,6 +606,7 @@ namespace GraphsClassProjectTakeTwo
                     {
                         edgesToBeRemoved.Add(edge);
                         edge.End.Indegree--;
+
                         edge.End.Edges.Remove(edge);
                     }
                     else if (edge.End.Equals(nodeToBeDeleted))
@@ -664,24 +635,9 @@ namespace GraphsClassProjectTakeTwo
             {
                 // you haven't yet selected a node
 
-                CreateLinesBetweenNodes(CurrentGraph);
+                string message = "You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node you want to use for the algorithm";
 
-                ResetTableWeightsSelected();
-
-                int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                if (initialIndex >= 0)
-                {
-                    start = CurrentGraph.Vertices[initialIndex];
-
-                    SelectedNodes[0] = start;
-
-                    MessageBox.Show("You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node you want to use for the algorithm");
-                }
-                else
-                {
-                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-                }
+                GetStart(label, start, message);
 
             }
             else if (SelectedNodes[1] == null)
@@ -723,6 +679,31 @@ namespace GraphsClassProjectTakeTwo
             {
                 // do nothing, we only care about the starting and ending node
             }
+        }
+
+        private Vertex GetStart(Label label, Vertex start, string message)
+        {
+            CreateLinesBetweenNodes(CurrentGraph);
+
+            ResetTableWeightsSelected();
+
+            int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
+
+            if (initialIndex >= 0)
+            {
+                start = CurrentGraph.Vertices[initialIndex];
+
+                SelectedNodes[0] = start;
+
+                MessageBox.Show(message);
+            }
+
+            else
+            {
+                MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+            }
+
+            return start;
         }
 
         private void PrimLabelClick(Label label)

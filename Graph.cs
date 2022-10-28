@@ -151,6 +151,21 @@ namespace GraphsClassProjectTakeTwo
 
             if (Vertices.Count > 0)
             {
+                List<Edge> edges = new List<Edge>();
+                foreach (Edge edge in Edges)
+                { 
+                    if (IsDirected)
+                    {
+                        edges.Add(edge);
+                    }
+                    else
+                    {
+                        edges.Add(edge);
+                        edges.Add(new Edge(edge.End, edge.Start, edge.Weight));
+                    }
+                }
+
+
                 // initialized to false
                 bool[] InDirection1 = new bool[Vertices.Count];
                 bool[] InDirection2 = new bool[Vertices.Count];
@@ -161,40 +176,8 @@ namespace GraphsClassProjectTakeTwo
 
                 InDirection1[0] = true;
 
-                var startEdges = Edges.Where(e => e.Start.Equals(currentVertex));
+                var startEdges = edges.Where(e => e.End.Equals(currentVertex));
                 foreach (Edge edge in startEdges)
-                {
-                    Neighbors.Enqueue(edge.End);
-                }
-
-                while (InDirection1.Contains(false))
-                {
-                    if (Neighbors.Count == 0)
-                    {
-                        break;
-                    }
-                    currentVertex = Neighbors.Dequeue();
-                    if (InDirection1[Vertices.IndexOf(currentVertex)])
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        InDirection1[Vertices.IndexOf(currentVertex)] = true;
-                        startEdges = Edges.Where(e => e.Start.Equals(currentVertex));
-                        foreach (Edge edge in startEdges)
-                        {
-                            Neighbors.Enqueue(edge.End);
-                        }
-                    }
-                }
-
-                //InDirection2: 
-                Neighbors = new Queue<Vertex>();
-                currentVertex = Vertices[0];
-                InDirection2[0] = true;
-
-                foreach (Edge edge in currentVertex.Edges)
                 {
                     Neighbors.Enqueue(edge.Start);
                 }
@@ -213,9 +196,44 @@ namespace GraphsClassProjectTakeTwo
                     else
                     {
                         InDirection1[Vertices.IndexOf(currentVertex)] = true;
-                        foreach (Edge edge in currentVertex.Edges)
+                        startEdges = edges.Where(e => e.End.Equals(currentVertex));
+                        foreach (Edge edge in startEdges)
                         {
                             Neighbors.Enqueue(edge.Start);
+                        }
+                    }
+                }
+
+                //InDirection2: 
+                Neighbors = new Queue<Vertex>();
+                currentVertex = Vertices[0];
+                InDirection2[0] = true;
+
+                startEdges = edges.Where(e => e.Start.Equals(currentVertex));
+
+                foreach (Edge edge in startEdges)
+                {
+                    Neighbors.Enqueue(edge.End);
+                }
+
+                while (InDirection2.Contains(false))
+                {
+                    if (Neighbors.Count == 0)
+                    {
+                        break;
+                    }
+                    currentVertex = Neighbors.Dequeue();
+                    if (InDirection2[Vertices.IndexOf(currentVertex)])
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        InDirection2[Vertices.IndexOf(currentVertex)] = true;
+                        startEdges = edges.Where(e => e.Start.Equals(currentVertex));
+                        foreach (Edge edge in startEdges)
+                        {
+                            Neighbors.Enqueue(edge.End);
                         }
 
                     }
@@ -237,7 +255,11 @@ namespace GraphsClassProjectTakeTwo
 
                 else
                 {
-                    IsConnected = !(InDirection1.Contains(false) || InDirection1.Contains(false));
+                    IsConnected = !(InDirection1.Contains(false) || InDirection2.Contains(false));
+                    for (int i = 0; i < Vertices.Count; i++)
+                    {
+                        Console.WriteLine("Vertex " + Vertices[i].Name + " Indirection1: " + InDirection1[i] + " Indirection 2: " + InDirection2[i]);
+                    }
                 }
             }
 
