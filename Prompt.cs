@@ -2,7 +2,6 @@
 
 namespace GraphsClassProjectTakeTwo
 {
-    // class copied from https://stackoverflow.com/questions/5427020/prompt-dialog-in-windows-forms
     public static class Prompt
     {
         public static string ShowDialog(string text, string caption)
