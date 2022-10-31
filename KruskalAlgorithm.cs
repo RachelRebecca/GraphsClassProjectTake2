@@ -9,7 +9,7 @@ namespace GraphsClassProjectTakeTwo
         public List<Edge> Kruskal()
         {
             // Has to be a graph (weighted or unweighted)
-            if (this.IsDirected) throw new Exception("forbidden algorithm attempt");
+            if (IsDirected) throw new Exception("forbidden algorithm attempt");
 
             List<Edge> shortestPath = new List<Edge>();
 
@@ -17,7 +17,7 @@ namespace GraphsClassProjectTakeTwo
 
             List<List<Vertex>> visited = new List<List<Vertex>>();
 
-            while (shortestPath.Count < this.Vertices.Count - 1)
+            while (shortestPath.Count < Vertices.Count - 1)
             {
                 Edge shortest = orderedEdges.ElementAt(0);
                 int foundSourceWhere = -1;

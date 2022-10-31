@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GraphsClassProjectTakeTwo
 {
     public class Vertex
     {
-        public String Name { get; set; }
+        public string Name { get; set; }
         public List<Edge> Edges { get; set; }
         public int Indegree { get; set; }
-
         public int Outdegree { get; set; }
         public double XCoord { get; set; }
         public double YCoord { get; set; }
 
-        public Vertex(String nm, double xCoord, double yCoord)
+        public Vertex(string name, double xCoord, double yCoord)
         {
-            Name = nm;
+            Name = name;
             Indegree = 0;
             Outdegree = 0;
             Edges = new List<Edge>();

@@ -10,7 +10,7 @@ namespace GraphsClassProjectTakeTwo
         { 
 
             // Has to be weighted (directed or undirected)
-            if (!this.IsWeighted) throw new Exception("forbidden algorithm attempt");
+            if (!IsWeighted) throw new Exception("forbidden algorithm attempt");
 
             List<Vertex> path = new List<Vertex>();
 

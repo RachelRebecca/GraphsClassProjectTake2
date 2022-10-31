@@ -11,9 +11,9 @@ namespace GraphsClassProjectTakeTwo
 {
     public partial class GraphProject : Form
     {
-        public SqlConnection sqlCon;
+        public SqlConnection SqlCon;
 
-        public List<String> GraphNames { get; set; }
+        public List<string> GraphNames { get; set; }
 
         public List<Button> GraphNameButtons { get; set; }
 
@@ -23,17 +23,17 @@ namespace GraphsClassProjectTakeTwo
 
         private Vertex[] SelectedNodes = new Vertex[] { null, null };
 
-        private ToolTip toolTip;
+        private readonly ToolTip ToolTip;
 
         public GraphProject()
         {
             InitializeComponent();
 
-            toolTip = new ToolTip();
+            ToolTip = new ToolTip();
 
-            sqlCon = this.MakeSQLConnection();
+            SqlCon = MakeSQLConnection();
 
-            GraphNames = this.GetGraphNames(sqlCon);
+            GraphNames = GetGraphNames(SqlCon);
 
             GraphNameButtons = new List<Button>();
 
@@ -44,7 +44,7 @@ namespace GraphsClassProjectTakeTwo
         {
             var server = ConfigurationManager.AppSettings["SERVER"];
             var database = ConfigurationManager.AppSettings["DATABASE"];
-            String strConnect = $"Server={server};Database={database};Trusted_Connection=True;";
+            string strConnect = $"Server={server};Database={database};Trusted_Connection=True;";
             SqlConnection sqlCon = new SqlConnection(strConnect);
             sqlCon.Open();
 
@@ -52,23 +52,25 @@ namespace GraphsClassProjectTakeTwo
 
         }
 
-        private List<String> GetGraphNames(SqlConnection sqlCon)
+        private List<string> GetGraphNames(SqlConnection sqlCon)
         {
-            SqlCommand getAllGraphs = new SqlCommand("spGetGraphNames", sqlCon);
-            getAllGraphs.CommandType = CommandType.StoredProcedure;
+            SqlCommand getAllGraphs = new SqlCommand("spGetGraphNames", sqlCon)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
             getAllGraphs.ExecuteNonQuery();
             SqlDataAdapter da1 = new SqlDataAdapter(getAllGraphs);
             DataSet dataset1 = new DataSet();
             da1.Fill(dataset1, "Graphs");
 
 
-            List<String> GraphNames = new List<String>();
+            List<string> GraphNames = new List<string>();
 
             var nrGraphs = dataset1.Tables["Graphs"].Rows.Count;
 
             for (int row = 0; row < nrGraphs; ++row)
             {
-                GraphNames.Add((String)dataset1.Tables["Graphs"].Rows[row].ItemArray[0]);
+                GraphNames.Add((string)dataset1.Tables["Graphs"].Rows[row].ItemArray[0]);
             }
 
             return GraphNames;
@@ -79,11 +81,13 @@ namespace GraphsClassProjectTakeTwo
         {
             int x = 30;
             int y = 0;
-            foreach (String name in GraphNames)
+            foreach (string name in GraphNames)
             {
-                Button button = new Button();
-                button.Name = name; // All button names are unique because in the SQL code, graph names are unique
-                button.Text = name;
+                Button button = new Button
+                {
+                    Name = name, // All button names are unique because in the SQL code, graph names are unique
+                    Text = name
+                };
                 button.Click += new EventHandler(GraphButton_Click);
                 button.Location = new Point(x, y);
                 GraphNameButtons.Add(button);
@@ -103,7 +107,7 @@ namespace GraphsClassProjectTakeTwo
 
             HighlightSelectedGraph(button);
 
-            Graph graph = new Graph(button.Name, sqlCon);
+            Graph graph = new Graph(button.Name, SqlCon);
 
             CurrentGraph = graph;
 
@@ -166,7 +170,7 @@ namespace GraphsClassProjectTakeTwo
 
             foreach (Edge edge in graph.Edges)
             {
-                String edgeName = edge.Start.Name + edge.End.Name;
+                string edgeName = edge.Start.Name + edge.End.Name;
                 double weight = edge.Weight;
                 table.Rows.Add(new object[] { edgeName, weight });
             }
@@ -180,15 +184,14 @@ namespace GraphsClassProjectTakeTwo
             List<Control> graphOperations = new List<Control>() { RemoveEdge, AddEdge, RemoveNode, Dijkstra, Prim, Kruskal, Topological };
             if (ctrl != null && graphOperations.Contains(ctrl) && !ctrl.Enabled)
             {
-                toolTip.SetToolTip(ctrl, CurrentGraph == null 
+                ToolTip.SetToolTip(ctrl, CurrentGraph == null 
                     ? "There is no graph being displayed yet" 
                     : "This algorithm is unavailable for selected graph");
-                toolTip.Show(toolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
-                Console.WriteLine(toolTip);
+                ToolTip.Show(ToolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
             }
             else
             {
-                toolTip.Hide(this);
+                ToolTip.Hide(this);
             }
         }
 
@@ -200,7 +203,7 @@ namespace GraphsClassProjectTakeTwo
             if (dgv != null && dgv.Rows.Count > 0 && dgv.CurrentRow.Selected)
             {
                 DataTable table = (DataTable)dgv.DataSource;
-                String edgeInTable = (String)(table.Rows[dgv.CurrentRow.Index]["Edges"]);
+                string edgeInTable = (string)table.Rows[dgv.CurrentRow.Index]["Edges"];
                 Edge edge = CurrentGraph.Edges.Find(e => (e.Start.Name + e.End.Name).Equals(edgeInTable) || (e.End.Name + e.Start.Name).Equals(edgeInTable));
 
                 if (CurrentGraphOperation == GraphOptions.REMOVE_EDGE)
@@ -233,10 +236,12 @@ namespace GraphsClassProjectTakeTwo
 
         private void CreateLabelType(Graph graph)
         {
-            Label labelGraphType = new Label();
-            labelGraphType.Location = new Point(15, 20);
+            Label labelGraphType = new Label
+            {
+                Location = new Point(15, 20)
+            };
 
-            String type = "";
+            string type = "";
             switch (graph.IsWeighted)
             {
                 case true:
@@ -268,9 +273,11 @@ namespace GraphsClassProjectTakeTwo
             List<Label> labelNodes = new List<Label>();
             for (int nodeNumber = 0; nodeNumber < graph.Vertices.Count; nodeNumber++)
             {
-                Label label = new Label();
-                label.Text = graph.Vertices[nodeNumber].Name;
-                label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                Label label = new Label
+                {
+                    Text = graph.Vertices[nodeNumber].Name,
+                    TextAlign = ContentAlignment.MiddleCenter
+                };
 
                 Graphics graphics = panelGraph.CreateGraphics();
                 Pen pen = new Pen(Color.Black);
@@ -493,7 +500,7 @@ namespace GraphsClassProjectTakeTwo
                     double weight = 1;
                     if (CurrentGraph.IsWeighted)
                     {
-                        String promptValue = Prompt.ShowDialog("Enter weight of the new edge", "Add Edge Weight");
+                        string promptValue = Prompt.ShowDialog("Enter weight of the new edge", "Add Edge Weight");
                         if (Double.TryParse(promptValue, out double result))
                         {
                             weight = result;
@@ -525,7 +532,7 @@ namespace GraphsClassProjectTakeTwo
             Vertex end = SelectedNodes[1];
             if (SelectedNodes[0] == null)
             {
-                String message = "You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to remove";
+                string message = "You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to remove";
 
                 GetStart(label, start, message);
             }
@@ -771,7 +778,7 @@ namespace GraphsClassProjectTakeTwo
             DataTable table = (DataTable)tableEdgesWeights.DataSource;
             for (int i = 0; i < table.Rows.Count; i++)
             {
-                if (edgeNames.Contains((String)table.Rows[i]["Edges"]))
+                if (edgeNames.Contains((string)table.Rows[i]["Edges"]))
                 {
                     tableEdgesWeights.Rows[i].Selected = true;
                 }
@@ -793,9 +800,6 @@ namespace GraphsClassProjectTakeTwo
                 edgeNames.Add(startingVertex.Name + endingVertex.Name);
                 Point initialLocation = new Point((int)(startingVertex.XCoord * panelGraph.Width), (int)(startingVertex.YCoord * panelGraph.Height));
                 Point terminalLocation = new Point((int)(endingVertex.XCoord * panelGraph.Width), (int)(endingVertex.YCoord * panelGraph.Height));
-                input.ForEach(e => Console.WriteLine(e.Name));
-                Console.WriteLine("Start: " + startingVertex.Name + " End: " + endingVertex.Name);
-
                 graphics.DrawLine(pen, initialLocation, terminalLocation);
 
                 System.Threading.Thread.Sleep(sleepTime);
@@ -804,7 +808,7 @@ namespace GraphsClassProjectTakeTwo
             DataTable table = (DataTable)tableEdgesWeights.DataSource;
             for (int i = 0; i < table.Rows.Count; i++)
             {
-                if (edgeNames.Contains((String)table.Rows[i]["Edges"]))
+                if (edgeNames.Contains((string)table.Rows[i]["Edges"]))
                 {
                     tableEdgesWeights.Rows[i].Selected = true;
                 }

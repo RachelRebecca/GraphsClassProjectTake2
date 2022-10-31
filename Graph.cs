@@ -7,7 +7,7 @@ namespace GraphsClassProjectTakeTwo
 {
     public partial class Graph
     {
-        public String Name { get; set; }
+        public string Name { get; set; }
 
         public bool IsWeighted { get; set; }
 
@@ -18,7 +18,7 @@ namespace GraphsClassProjectTakeTwo
         public List<Edge> Edges { get; set; }
 
         // TODO: Refactor the Edges.Where and Edges.Find methods 
-        public Graph(String name, SqlConnection sqlCon)
+        public Graph(string name, SqlConnection sqlCon)
         {
             this.Name = name;
             this.Vertices = new List<Vertex>();
@@ -35,13 +35,17 @@ namespace GraphsClassProjectTakeTwo
                 SqlCommand getGraphType = new SqlCommand("spGetGraphFlags", sqlCon);
                 SqlCommand getEdgesForGraph = new SqlCommand("spGetEdges", sqlCon);
 
-                SqlParameter sqlParameter1 = new SqlParameter();
-                sqlParameter1.ParameterName = "@GraphName";
-                sqlParameter1.Value = this.Name;
+                SqlParameter sqlParameter1 = new SqlParameter
+                {
+                    ParameterName = "@GraphName",
+                    Value = Name
+                };
 
-                SqlParameter sqlParameter2 = new SqlParameter();
-                sqlParameter2.ParameterName = "@GraphName";
-                sqlParameter2.Value = this.Name;
+                SqlParameter sqlParameter2 = new SqlParameter
+                {
+                    ParameterName = "@GraphName",
+                    Value = Name
+                };
 
                 getGraphType.Parameters.Add(sqlParameter1);
                 getEdgesForGraph.Parameters.Add(sqlParameter2);
@@ -53,8 +57,8 @@ namespace GraphsClassProjectTakeTwo
                 da1.Fill(dataSet1, "Flags");
 
                 // if it's "1", then it's true otherwise it's false
-                this.IsWeighted = (bool)dataSet1.Tables["Flags"].Rows[0].ItemArray[0];
-                this.IsDirected = (bool)dataSet1.Tables["Flags"].Rows[0].ItemArray[1];
+                IsWeighted = (bool)dataSet1.Tables["Flags"].Rows[0].ItemArray[0];
+                IsDirected = (bool)dataSet1.Tables["Flags"].Rows[0].ItemArray[1];
 
                 getEdgesForGraph.CommandType = CommandType.StoredProcedure;
                 getEdgesForGraph.ExecuteNonQuery();
@@ -67,11 +71,8 @@ namespace GraphsClassProjectTakeTwo
 
                 for (int row = 0; row < nrEdges; ++row)
                 {
-                    String initialNode = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[0];
-                    String terminalNode = (String)dataSet2.Tables["Edges"].Rows[row].ItemArray[3];
-
-                    // TODO: store initialNodeX, initialNodeY, terminalNodeX, terminalNodeY somewhere
-
+                    string initialNode = (string)dataSet2.Tables["Edges"].Rows[row].ItemArray[0];
+                    string terminalNode = (string)dataSet2.Tables["Edges"].Rows[row].ItemArray[3];
                     double weight;
                     try
                     {
@@ -82,7 +83,7 @@ namespace GraphsClassProjectTakeTwo
                         throw new Exception("Invalid weight in row " + row + ". Weight = " + dataSet2.Tables["Edges"].Rows[row].ItemArray[6]);
                     }
 
-                    double ix, iy, tx, ty;
+                    double ix, iy, tx, ty; // initial and terminal x and y coordinates
 
                     try
                     {
@@ -107,7 +108,8 @@ namespace GraphsClassProjectTakeTwo
                                                     : Vertices[terminalIndex];
 
 
-                    Edge newEdge = new Edge(initial, terminal, weight); // weight = 1 for unweighted and database weights for weighted
+                    Edge newEdge = new Edge(initial, terminal, weight); 
+                    // weight = 1 for unweighted and database weights for weighted
                     Edges.Add(newEdge);
 
                     if (initialIndex < 0 && terminalIndex < 0)

@@ -9,7 +9,7 @@ namespace GraphsClassProjectTakeTwo
         public List<Edge> Prim(Vertex start)
         {
             // Has to be a graph (weighted or unweighted)
-            if (this.IsDirected) throw new Exception("forbidden algorithm attempt");
+            if (IsDirected) throw new Exception("forbidden algorithm attempt");
 
             Edge[] edges = new Edge[Vertices.Count - 1];
             List<PrimStruct> prims = new List<PrimStruct>();
@@ -39,33 +39,33 @@ namespace GraphsClassProjectTakeTwo
                 prims.RemoveAt(0);
 
                 // add an edge to that prim
-                edges[numEdgesFound] = Edges.Find(e => (e.Start.Equals(currentPrim.Parent) && e.End.Equals(currentPrim.vertex)) ||
-                                                       (e.Start.Equals(currentPrim.vertex) && e.End.Equals(currentPrim.Parent)));
+                edges[numEdgesFound] = Edges.Find(e => (e.Start.Equals(currentPrim.Parent) && e.End.Equals(currentPrim.Node)) ||
+                                                       (e.Start.Equals(currentPrim.Node) && e.End.Equals(currentPrim.Parent)));
 
-                foundVertices.Add(currentPrim.vertex);
+                foundVertices.Add(currentPrim.Node);
                 numEdgesFound++;
 
 
-                var currentEdges = Edges.Where(e => (e.Start.Equals(currentPrim.vertex) || e.End.Equals(currentPrim.vertex)));
+                var currentEdges = Edges.Where(e => e.Start.Equals(currentPrim.Node) || e.End.Equals(currentPrim.Node));
 
 
                 foreach (Edge edge in currentEdges)
                 {
-                    Vertex neighbor = edge.Start.Equals(currentPrim.vertex) ? edge.End : edge.Start;
+                    Vertex neighbor = edge.Start.Equals(currentPrim.Node) ? edge.End : edge.Start;
                     if (!foundVertices.Contains(neighbor))
                     {
-                        PrimStruct neighborPrim = prims.Find(p => p.vertex.Equals(neighbor));
-                        if (neighborPrim.vertex != null)
+                        PrimStruct neighborPrim = prims.Find(p => p.Node.Equals(neighbor));
+                        if (neighborPrim.Node != null)
                         {
                             if (edge.Weight < neighborPrim.Cost)
                             {
                                 neighborPrim.Cost = edge.Weight;
-                                neighborPrim.Parent = currentPrim.vertex;
+                                neighborPrim.Parent = currentPrim.Node;
                             }
                         }
                         else
                         {
-                            prims.Add(new PrimStruct(neighbor, edge.Weight, currentPrim.vertex));
+                            prims.Add(new PrimStruct(neighbor, edge.Weight, currentPrim.Node));
                         }
                     }
 
@@ -78,14 +78,14 @@ namespace GraphsClassProjectTakeTwo
 
         struct PrimStruct
         {
-            public PrimStruct(Vertex vertex, double cost, Vertex parent)
+            public PrimStruct(Vertex node, double cost, Vertex parent)
             {
-                this.vertex = vertex;
+                this.Node = node;
                 this.Cost = cost;
                 this.Parent = parent;
             }
 
-            internal Vertex vertex;
+            internal Vertex Node;
             internal double Cost { get; set; }
             internal Vertex Parent { get; set; }
         }
