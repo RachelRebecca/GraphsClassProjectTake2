@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Windows.Forms.VisualStyles;
-using System.Security.Cryptography;
 
 namespace GraphsClassProjectTakeTwo
 {

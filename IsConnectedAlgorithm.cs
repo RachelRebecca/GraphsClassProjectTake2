@@ -1,38 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraphsClassProjectTakeTwo
 {
     public partial class Graph
     {
+        public enum Direction { DIRECTION_1, DIRECTION_2 }
         public bool IsConnected()
         {
             bool IsConnected = false;
 
             if (Vertices.Count > 0)
             {
-                if (IsDirected)
-                {
-                    IsConnected = IsConnectedDigraph();
-                }
-
-                else
-                {
-                    IsConnected = IsConnectedGraph();
-                }
+                IsConnected = IsConnectedGraph();
             }
 
             return IsConnected;
         }
 
-        public bool IsConnectedDigraph()
+        public bool IsStronglyConnectedDigraph()
         {
             bool IsConnected = true;
-            bool[] InDirection1 = GetIndirection(Edges, 1);
-            bool[] InDirection2 = GetIndirection(Edges, 2);
+            bool[] InDirection1 = GetIndirection(Edges, Direction.DIRECTION_1);
+            bool[] InDirection2 = GetIndirection(Edges, Direction.DIRECTION_2);
 
             for (int i = 0; i < Vertices.Count; i++)
             {
@@ -42,7 +32,6 @@ namespace GraphsClassProjectTakeTwo
                     break;
                 }
             }
-
             return IsConnected;
         }
         public bool IsConnectedGraph()
@@ -54,52 +43,51 @@ namespace GraphsClassProjectTakeTwo
                 edges.Add(new Edge(edge.End, edge.Start, edge.Weight));
             }
 
-            bool[] InDirection1 = GetIndirection(edges, 1);
-            bool[] InDirection2 = GetIndirection(edges, 2);
+            bool[] InDirection1 = GetIndirection(edges, Direction.DIRECTION_1);
+            bool[] InDirection2 = GetIndirection(edges, Direction.DIRECTION_2);
 
             return !(InDirection1.Contains(false) || InDirection2.Contains(false));
         }
 
-        public bool[] GetIndirection(List<Edge> edges, int direction)
+        public bool[] GetIndirection(List<Edge> edges, Direction direction)
         {
             bool[] InDirection = new bool[Vertices.Count];
-            if (direction == 1 || direction == 2)
+
+            Queue<Vertex> Neighbors = new Queue<Vertex>();
+            Vertex currentVertex = Vertices[0];
+            InDirection[0] = true;
+
+            var startEdges = direction == Direction.DIRECTION_1
+                ? edges.Where(e => e.End.Equals(currentVertex))
+                : edges.Where(e => e.Start.Equals(currentVertex));
+            foreach (Edge edge in startEdges)
             {
-                Queue<Vertex> Neighbors = new Queue<Vertex>();
-                Vertex currentVertex = Vertices[0];
-                InDirection[0] = true;
+                Neighbors.Enqueue(direction == Direction.DIRECTION_1 ? edge.Start : edge.End);
+            }
 
-                var startEdges = direction == 1
-                    ? edges.Where(e => e.End.Equals(currentVertex))
-                    : edges.Where(e => e.Start.Equals(currentVertex));
-                foreach (Edge edge in startEdges)
+            while (InDirection.Contains(false))
+            {
+                if (Neighbors.Count == 0)
                 {
-                    Neighbors.Enqueue(direction == 1 ? edge.Start : edge.End);
+                    break;
+                }
+                currentVertex = Neighbors.Dequeue();
+                if (InDirection[Vertices.IndexOf(currentVertex)])
+                {
+                    continue;
+                }
+                else
+                {
+                    InDirection[Vertices.IndexOf(currentVertex)] = true;
+                    startEdges = direction == Direction.DIRECTION_1
+                        ? edges.Where(e => e.End.Equals(currentVertex))
+                        : edges.Where(e => e.Start.Equals(currentVertex));
+                    foreach (Edge edge in startEdges)
+                    {
+                        Neighbors.Enqueue(direction == Direction.DIRECTION_1 ? edge.Start : edge.End);
+                    }
                 }
 
-                while (InDirection.Contains(false))
-                {
-                    if (Neighbors.Count == 0)
-                    {
-                        break;
-                    }
-                    currentVertex = Neighbors.Dequeue();
-                    if (InDirection[Vertices.IndexOf(currentVertex)])
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        InDirection[Vertices.IndexOf(currentVertex)] = true;
-                        startEdges = direction == 1
-                            ? edges.Where(e => e.End.Equals(currentVertex))
-                            : edges.Where(e => e.Start.Equals(currentVertex));
-                        foreach (Edge edge in startEdges)
-                        {
-                            Neighbors.Enqueue(direction == 1 ? edge.Start : edge.End);
-                        }
-                    }
-                }
             }
             return InDirection;
         }
