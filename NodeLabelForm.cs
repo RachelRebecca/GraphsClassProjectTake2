@@ -62,7 +62,7 @@ namespace GraphsClassProjectTakeTwo
             {
                 // you have already selected the starting node
 
-                SetEnd(label, end);
+                end = SetEnd(label, end);
 
                 if (end != null)
                 {
@@ -97,7 +97,7 @@ namespace GraphsClassProjectTakeTwo
         {
             CreateLinesBetweenNodes(CurrentGraph);
 
-            ResetTableWeightsSelected();
+            ResetEdgesWeightsTable();
 
             int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
 
@@ -141,31 +141,20 @@ namespace GraphsClassProjectTakeTwo
                 ResetPanel();
 
                 Vertex nodeToBeDeleted = CurrentGraph.Vertices[initialIndex];
-                nodeToBeDeleted.Outdegree = 0;
-                nodeToBeDeleted.Indegree = 0;
 
                 List<Edge> edgesToBeRemoved = new List<Edge>();
 
                 foreach (Edge edge in CurrentGraph.Edges)
                 {
-                    if (edge.Start.Equals(nodeToBeDeleted))
+                    if (edge.Start.Equals(nodeToBeDeleted)
+                        || edge.End.Equals(nodeToBeDeleted))
                     {
                         edgesToBeRemoved.Add(edge);
-                        edge.End.Indegree--;
-                        edge.End.Edges.Remove(edge);
                     }
-                    else if (edge.End.Equals(nodeToBeDeleted))
-                    {
-                        edgesToBeRemoved.Add(edge);
-                        edge.Start.Outdegree--;
-                    }
-
                 }
 
                 CurrentGraph.Vertices.Remove(nodeToBeDeleted);
-                nodeToBeDeleted.Edges.Clear();
-                CurrentGraph.Edges.RemoveAll(edge => edgesToBeRemoved.Contains(edge));
-
+                edgesToBeRemoved.ForEach(edge => RemoveSelectedEdge(edge));
                 ResetForm();
 
             }
@@ -192,7 +181,7 @@ namespace GraphsClassProjectTakeTwo
             {
                 // you have already selected the starting node
 
-                SetEnd(label, end);
+                end = SetEnd(label, end);
 
                 if (end != null)
                 {
@@ -201,13 +190,7 @@ namespace GraphsClassProjectTakeTwo
                     Edge edge = CurrentGraph.Edges.Find(e => (e.Start.Name.Equals(start.Name) && e.End.Name.Equals(end.Name))
                         || (!CurrentGraph.IsDirected && e.End.Name.Equals(start.Name) && e.Start.Name.Equals(end.Name)));
 
-                    if (edge != null)
-                    {
-                        edge.Start.Outdegree--;
-                        edge.End.Indegree--;
-                        edge.End.Edges.Remove(edge);
-                        CurrentGraph.Edges.Remove(edge);
-                    }
+                    RemoveSelectedEdge(edge);
 
                     ResetForm();
                 }
@@ -232,7 +215,7 @@ namespace GraphsClassProjectTakeTwo
             else if (SelectedNodes[1] == null)
             {
                 // you have already selected the starting node
-                SetEnd(label, end);
+                end = SetEnd(label, end);
 
                 if (end != null)
                 {
@@ -278,7 +261,7 @@ namespace GraphsClassProjectTakeTwo
         {
             CreateLinesBetweenNodes(CurrentGraph);
 
-            ResetTableWeightsSelected();
+            ResetEdgesWeightsTable();
 
             int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
 
@@ -304,7 +287,7 @@ namespace GraphsClassProjectTakeTwo
         /// </summary>
         /// <param name="label">The label near selected node</param>
         /// <param name="end">The ending Vertex</param>
-        private void SetEnd(Label label, Vertex end)
+        private Vertex SetEnd(Label label, Vertex end)
         {
             int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
 
@@ -317,6 +300,23 @@ namespace GraphsClassProjectTakeTwo
             else
             {
                 MessageBox.Show("Something went wrong, the Vertex couldn't be found");
+            }
+
+            return end;
+        }
+
+        /// <summary>
+        /// Removes selected edge
+        /// </summary>
+        /// <param name="edge">Selected edge</param>
+        private void RemoveSelectedEdge(Edge edge)
+        {
+            if (edge != null)
+            {
+                edge.Start.Outdegree--;
+                edge.End.Indegree--;
+                edge.End.Edges.Remove(edge);
+                CurrentGraph.Edges.Remove(edge);
             }
         }
     }

@@ -66,6 +66,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EdgesWeightsTableForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GraphOperationsForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -223,7 +223,7 @@ namespace GraphsClassProjectTakeTwo
 
                 CreateLinesBetweenNodes(CurrentGraph);
 
-                ResetTableWeightsSelected();
+                ResetEdgesWeightsTable();
             }
         }
     }
