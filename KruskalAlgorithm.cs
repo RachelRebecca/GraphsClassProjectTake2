@@ -6,6 +6,11 @@ namespace GraphsClassProjectTakeTwo
 {
     public partial class Graph
     {
+        /// <summary>
+        /// Does Kruskal's Minimum Spanning Tree algorithm
+        /// </summary>
+        /// <returns>List of edges of the MST</returns>
+        /// <exception cref="Exception">forbidden algorithm attempt</exception>
         public List<Edge> Kruskal()
         {
             // Has to be a graph (weighted or unweighted)

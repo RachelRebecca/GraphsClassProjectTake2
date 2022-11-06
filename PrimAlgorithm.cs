@@ -6,6 +6,12 @@ namespace GraphsClassProjectTakeTwo
 {
     public partial class Graph
     {
+        /// <summary>
+        /// Does Prim's Minimum Spanning Tree algorithm from a starting Vertex
+        /// </summary>
+        /// <param name="start">the starting Vertex</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">forbidden algorithm attempt</exception>
         public List<Edge> Prim(Vertex start)
         {
             // Has to be a graph (weighted or unweighted)
@@ -76,6 +82,9 @@ namespace GraphsClassProjectTakeTwo
 
         }
 
+        /// <summary>
+        /// struct for a Prim - contains the node, its cost, and parent
+        /// </summary>
         struct PrimStruct
         {
             public PrimStruct(Vertex node, double cost, Vertex parent)

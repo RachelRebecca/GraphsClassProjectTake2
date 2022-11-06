@@ -5,7 +5,15 @@ namespace GraphsClassProjectTakeTwo
 {
     public partial class Graph
     {
+        /// <summary>
+        /// The two directions for edges (either goes in Direction 1 or in Direction 2)
+        /// </summary>
         public enum Direction { DIRECTION_1, DIRECTION_2 }
+        
+        /// <summary>
+        /// Checks if this is a connected graph
+        /// </summary>
+        /// <returns>if graph is connected or not</returns>
         public bool IsConnected()
         {
             bool IsConnected = false;
@@ -18,6 +26,10 @@ namespace GraphsClassProjectTakeTwo
             return IsConnected;
         }
 
+        /// <summary>
+        /// Checks if digraph is strongly connected
+        /// </summary>
+        /// <returns>if digraph is strongly connected or not</returns>
         public bool IsStronglyConnectedDigraph()
         {
             bool IsConnected = true;
@@ -34,6 +46,11 @@ namespace GraphsClassProjectTakeTwo
             }
             return IsConnected;
         }
+        
+        /// <summary>
+        /// Checks if graph is connected using the algorithm
+        /// </summary>
+        /// <returns>if graph is connected or not</returns>
         public bool IsConnectedGraph()
         {
             List<Edge> edges = new List<Edge>();
@@ -49,6 +66,12 @@ namespace GraphsClassProjectTakeTwo
             return !(InDirection1.Contains(false) || InDirection2.Contains(false));
         }
 
+        /// <summary>
+        /// The list of edges in given direction
+        /// </summary>
+        /// <param name="edges">the list of edges (all edges from Edges list + the edges terminal -> initial)</param>
+        /// <param name="direction">the direction being travelled through in the algorithm (1 or 2)</param>
+        /// <returns>a list of visited (bool) vertices</returns>
         public bool[] GetIndirection(List<Edge> edges, Direction direction)
         {
             bool[] InDirection = new bool[Vertices.Count];

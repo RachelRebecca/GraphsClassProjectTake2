@@ -66,9 +66,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GraphOperationsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="IsConnectedAlgorithm.cs" />
     <Compile Include="Prompt.cs" />
-    <Compile Include="GraphOptions.cs" />
     <Compile Include="DijkstraAlgorithm.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Form1.cs">

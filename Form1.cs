@@ -11,35 +11,27 @@ namespace GraphsClassProjectTakeTwo
 {
     public partial class GraphProject : Form
     {
+        // the SQL Connection which gets created in the form and passed to each Graph
         public SqlConnection SqlCon;
 
+        // the names of all the graphs
         public List<string> GraphNames { get; set; }
-
-        public List<Button> GraphNameButtons { get; set; }
-
-        private Graph CurrentGraph = null;
-
-        private GraphOptions CurrentGraphOperation = GraphOptions.NONE;
-
-        private Vertex[] SelectedNodes = new Vertex[] { null, null };
-
-        private readonly ToolTip ToolTip;
 
         public GraphProject()
         {
             InitializeComponent();
 
-            ToolTip = new ToolTip();
-
             SqlCon = MakeSQLConnection();
 
             GraphNames = GetGraphNames(SqlCon);
 
-            GraphNameButtons = new List<Button>();
-
             SetUpGraphNameButtons();
         }
 
+        /// <summary>
+        /// Make the SQL connection using App.config and open it
+        /// </summary>
+        /// <returns>the open SQL connection</returns>
         public SqlConnection MakeSQLConnection()
         {
             var server = ConfigurationManager.AppSettings["SERVER"];
@@ -52,6 +44,11 @@ namespace GraphsClassProjectTakeTwo
 
         }
 
+        /// <summary>
+        /// Use stored procedure to get all the existing graph names from the database
+        /// </summary>
+        /// <param name="sqlCon"></param>
+        /// <returns>List containing all the graph names</returns>
         private List<string> GetGraphNames(SqlConnection sqlCon)
         {
             SqlCommand getAllGraphs = new SqlCommand("spGetGraphNames", sqlCon)
@@ -76,7 +73,9 @@ namespace GraphsClassProjectTakeTwo
             return GraphNames;
         }
 
-
+        /// <summary>
+        /// Creates a new Button for every graph
+        /// </summary>
         private void SetUpGraphNameButtons()
         {
             int x = 30;
@@ -90,7 +89,6 @@ namespace GraphsClassProjectTakeTwo
                 };
                 button.Click += new EventHandler(GraphButton_Click);
                 button.Location = new Point(x, y);
-                GraphNameButtons.Add(button);
 
                 y += 100;
 
@@ -99,6 +97,11 @@ namespace GraphsClassProjectTakeTwo
             panelGraphButtons.Refresh();
         }
 
+        /// <summary>
+        /// All the methods done when user clicks on a graph
+        /// </summary>
+        /// <param name="sender">The graph button being clicked on</param>
+        /// <param name="e">The event argument</param>
         private void GraphButton_Click(object sender, EventArgs e)
         {
             ResetPanel();
@@ -115,7 +118,7 @@ namespace GraphsClassProjectTakeTwo
 
             ShowGraph(graph);
 
-            SetUpAlgorithmButtons(graph);
+            SetUpGraphOperationButtons(graph);
 
             ShowWeights(graph);
         }
@@ -135,33 +138,6 @@ namespace GraphsClassProjectTakeTwo
             button.ForeColor = Color.White;
         }
 
-        private void SetUpAlgorithmButtons(Graph graph)
-        {
-            Topological.Enabled = true;
-            Kruskal.Enabled = true;
-            Prim.Enabled = true;
-            Dijkstra.Enabled = true;
-            RemoveEdge.Enabled = true;
-            RemoveNode.Enabled = true;
-            AddEdge.Enabled = true;
-
-            if (!graph.IsWeighted)
-            {
-                Dijkstra.Enabled = false;
-            }
-            if (graph.IsDirected)
-            {
-                Kruskal.Enabled = false;
-                Prim.Enabled = false;
-            }
-
-            if (!CurrentGraph.IsDirected)
-            {
-                Topological.Enabled = false;
-            }
-
-        }
-
         private void ShowWeights(Graph graph)
         {
             DataTable table = new DataTable();
@@ -176,23 +152,6 @@ namespace GraphsClassProjectTakeTwo
             }
 
             tableEdgesWeights.DataSource = table;
-        }
-
-        private void GraphOperations_MouseMove(object sender, MouseEventArgs e)
-        {
-            Control ctrl = ((Panel)sender).GetChildAtPoint(e.Location);
-            List<Control> graphOperations = new List<Control>() { RemoveEdge, AddEdge, RemoveNode, Dijkstra, Prim, Kruskal, Topological };
-            if (ctrl != null && graphOperations.Contains(ctrl) && !ctrl.Enabled)
-            {
-                ToolTip.SetToolTip(ctrl, CurrentGraph == null 
-                    ? "There is no graph being displayed yet" 
-                    : "This algorithm is unavailable for selected graph");
-                ToolTip.Show(ToolTip.GetToolTip(ctrl), ctrl, ctrl.Width / 2, ctrl.Height / 2);
-            }
-            else
-            {
-                ToolTip.Hide(this);
-            }
         }
 
         private void TableWeights_CellClick(object sender, DataGridViewCellEventArgs evt)
@@ -333,238 +292,6 @@ namespace GraphsClassProjectTakeTwo
             }
         }
 
-        private void Kruskal_Click(object sender, EventArgs e)
-        {
-            CurrentGraphOperation = GraphOptions.KRUSKAL;
-
-            if (CurrentGraph != null && !CurrentGraph.IsDirected)
-            {
-                CreateLinesBetweenNodes(CurrentGraph);
-
-                ResetTableWeightsSelected();
-
-                if (!CurrentGraph.IsConnected())
-                {
-                    MessageBox.Show("Graph is either empty or not connected");
-                }
-                else
-                {
-                    try
-                    {
-                        List<Edge> edges = CurrentGraph.Kruskal();
-                        // draw minimum spanning graph edges in red
-                        DrawRedLines(edges);
-                    }
-                    catch (Exception exception)
-                    {
-                        MessageBox.Show(exception.Message);
-                    }
-                }
-            }
-        }
-
-        private void Topological_Click(object sender, EventArgs e)
-        {
-            CurrentGraphOperation = GraphOptions.TOPOLOGICAL;
-
-            if (CurrentGraph != null && CurrentGraph.IsDirected)
-            {
-                if (CurrentGraph.Vertices.Count == 0)
-                {
-                    MessageBox.Show("Graph is empty");
-                }
-                else
-                {
-                    CreateLinesBetweenNodes(CurrentGraph);
-
-                    ResetTableWeightsSelected();
-
-                    string topologicalOutput = "";
-
-                    try
-                    {
-                        List<Vertex> output = CurrentGraph.TopologicalSort();
-
-
-                        foreach (Vertex vertex in output)
-                        {
-                            topologicalOutput += vertex.Name + " ";
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        topologicalOutput = exception.Message;
-                    }
-
-                    MessageBox.Show("Topological sort of " + CurrentGraph.Name + ":\n\n" + topologicalOutput);
-                }
-
-            }
-        }
-
-        private void Prim_Click(object sender, EventArgs e)
-        {
-            CurrentGraphOperation = GraphOptions.PRIM;
-
-            if (CurrentGraph != null && !CurrentGraph.IsDirected)
-            {
-                CreateLinesBetweenNodes(CurrentGraph);
-
-                ResetTableWeightsSelected();
-
-                if (!CurrentGraph.IsConnected())
-                {
-                    MessageBox.Show("Graph is either empty or not connected.");
-                }
-                else
-                {
-                    MessageBox.Show("Click on the label near the node that you want to use for the algorithm");
-                }
-            }
-
-        }
-
-        private void Dijkstra_Click(object sender, EventArgs e)
-        {
-            CurrentGraphOperation = GraphOptions.DIJKSTRA;
-
-            SelectedNodes = new Vertex[] { null, null };
-
-            if (CurrentGraph != null && CurrentGraph.IsWeighted)
-            {
-                if (CurrentGraph.Vertices.Count == 0)
-                {
-                    MessageBox.Show("Graph is empty");
-                }
-                else
-                {
-                    CreateLinesBetweenNodes(CurrentGraph);
-
-                    ResetTableWeightsSelected();
-
-                    MessageBox.Show("Click on the label near the starting node that you want to use for the algorithm");
-                }
-            }
-        }
-
-        private void Label_Click(object sender, EventArgs e)
-        {
-            Label label = (Label)sender;
-            if (CurrentGraphOperation == GraphOptions.PRIM)
-            {
-                PrimLabelClick(label);
-
-            }
-            else if (CurrentGraphOperation == GraphOptions.DIJKSTRA)
-            {
-                DijkstraLabelClick(label);
-
-            }
-            else if (CurrentGraphOperation == GraphOptions.REMOVE_NODE)
-            {
-                RemoveNodeLabelClick(label);
-            }
-            else if (CurrentGraphOperation == GraphOptions.REMOVE_EDGE)
-            {
-                RemoveEdgeLabelClick(label);
-            }
-            else if (CurrentGraphOperation == GraphOptions.ADD_EDGE)
-            {
-                AddEdgeLabelClick(label);
-            }
-        }
-
-        private void AddEdgeLabelClick(Label label)
-        {
-            Vertex start = SelectedNodes[0];
-            Vertex end = SelectedNodes[1];
-            if (SelectedNodes[0] == null)
-            {
-                string message = "You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to add";
-                start = GetStart(label, start, message);
-
-            }
-            else if (SelectedNodes[1] == null)
-            {
-                // you have already selected the starting node
-
-                int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                if (terminalIndex >= 0)
-                {
-                    end = CurrentGraph.Vertices[terminalIndex];
-
-                    SelectedNodes[1] = end;
-
-                    // TODO: user input to select weight
-                    double weight = 1;
-                    if (CurrentGraph.IsWeighted)
-                    {
-                        string promptValue = Prompt.ShowDialog("Enter weight of the new edge", "Add Edge Weight");
-                        if (Double.TryParse(promptValue, out double result))
-                        {
-                            weight = result;
-                        }
-                        else
-                        {
-                            MessageBox.Show("Couldn't successfully save the weight of the edge, using the default (weight = 1)");
-                        }
-
-                    }
-
-                    ResetPanel();
-
-                    Edge edge = new Edge(start, end, weight);
-                    start.Outdegree++;
-                    end.Indegree++;
-                    CurrentGraph.Edges.Add(edge);
-                    end.Edges.Add(edge);
-
-
-                    ResetForm();
-                }
-            }
-        }
-
-        private void RemoveEdgeLabelClick(Label label)
-        {
-            Vertex start = SelectedNodes[0];
-            Vertex end = SelectedNodes[1];
-            if (SelectedNodes[0] == null)
-            {
-                string message = "You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node of the edge you want to remove";
-
-                GetStart(label, start, message);
-            }
-            else if (SelectedNodes[1] == null)
-            {
-                // you have already selected the starting node
-
-                int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                if (terminalIndex >= 0)
-                {
-                    ResetPanel();
-
-                    end = CurrentGraph.Vertices[terminalIndex];
-
-                    SelectedNodes[1] = end;
-
-                    Edge edge = CurrentGraph.Edges.Find(edg => (edg.Start.Name.Equals(start.Name) && edg.End.Name.Equals(end.Name))
-                    || (!CurrentGraph.IsDirected && edg.End.Name.Equals(start.Name) && edg.Start.Name.Equals(end.Name)));
-
-                    if (edge != null)
-                    {
-                        edge.Start.Outdegree--;
-                        edge.End.Indegree--;
-                        edge.End.Edges.Remove(edge);
-                        CurrentGraph.Edges.Remove(edge);
-                    }
-                    ResetForm();
-                }
-            }
-        }
-
         private void RemoveEdgeTableClick(Edge edge)
         {
             if (edge != null)
@@ -583,162 +310,6 @@ namespace GraphsClassProjectTakeTwo
                 MessageBox.Show("Something went wrong, edge couldn't be found.");
             }
         }
-
-        private void RemoveNodeLabelClick(Label label)
-        {
-            int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-            if (initialIndex < 0)
-            {
-                MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-            }
-            else
-            {
-                ResetPanel();
-
-                Vertex nodeToBeDeleted = CurrentGraph.Vertices[initialIndex];
-                nodeToBeDeleted.Outdegree = 0;
-                nodeToBeDeleted.Indegree = 0;
-
-                List<Edge> edgesToBeRemoved = new List<Edge>();
-
-                foreach (Edge edge in CurrentGraph.Edges)
-                {
-                    if (edge.Start.Equals(nodeToBeDeleted))
-                    {
-                        edgesToBeRemoved.Add(edge);
-                        edge.End.Indegree--;
-
-                        edge.End.Edges.Remove(edge);
-                    }
-                    else if (edge.End.Equals(nodeToBeDeleted))
-                    {
-                        edgesToBeRemoved.Add(edge);
-                        edge.Start.Outdegree--;
-                    }
-
-                }
-
-                CurrentGraph.Vertices.Remove(nodeToBeDeleted);
-                nodeToBeDeleted.Edges.Clear();
-                CurrentGraph.Edges.RemoveAll(edge => edgesToBeRemoved.Contains(edge));
-
-                ResetForm();
-
-            }
-        }
-
-        private void DijkstraLabelClick(Label label)
-        {
-            Vertex start = SelectedNodes[0];
-            Vertex end = SelectedNodes[1];
-
-            if (SelectedNodes[0] == null)
-            {
-                // you haven't yet selected a node
-
-                string message = "You chose " + label.Text + " as your starting node\nPlease click on another label near the ending node you want to use for the algorithm";
-
-                GetStart(label, start, message);
-
-            }
-            else if (SelectedNodes[1] == null)
-            {
-                // you have already selected the starting node
-
-                int terminalIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-                if (terminalIndex >= 0)
-                {
-                    end = CurrentGraph.Vertices[terminalIndex];
-
-                    SelectedNodes[1] = end;
-
-                    try
-                    {
-                        List<Vertex> output = CurrentGraph.Dijkstra(start, end, out double shortestDistance);
-
-                        // Draw path one by one using red lines
-                        DrawRedLines(output, 500);
-
-                        MessageBox.Show("Shortest distance: " + shortestDistance);
-                    }
-                    catch (Exception exception)
-                    {
-                        MessageBox.Show(exception.Message);
-                    }
-
-                    SelectedNodes = new Vertex[] { null, null };
-
-                }
-                else
-                {
-                    MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-                }
-
-            }
-            else
-            {
-                // do nothing, we only care about the starting and ending node
-            }
-        }
-
-        private Vertex GetStart(Label label, Vertex start, string message)
-        {
-            CreateLinesBetweenNodes(CurrentGraph);
-
-            ResetTableWeightsSelected();
-
-            int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-            if (initialIndex >= 0)
-            {
-                start = CurrentGraph.Vertices[initialIndex];
-
-                SelectedNodes[0] = start;
-
-                MessageBox.Show(message);
-            }
-
-            else
-            {
-                MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-            }
-
-            return start;
-        }
-
-        private void PrimLabelClick(Label label)
-        {
-            CreateLinesBetweenNodes(CurrentGraph);
-
-            ResetTableWeightsSelected();
-
-            int initialIndex = CurrentGraph.Vertices.FindIndex(item => label.Text.Equals(item.Name));
-
-            if (initialIndex < 0)
-            {
-                MessageBox.Show("Something went wrong, the Vertex couldn't be found");
-            }
-            else
-            {
-                Vertex start = CurrentGraph.Vertices[initialIndex];
-
-                try
-                {
-                    List<Edge> output = CurrentGraph.Prim(start);
-
-                    // draw minimum spanning graph edges in red
-                    DrawRedLines(output);
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show(exception.Message);
-                    Console.WriteLine(exception.StackTrace);
-                }
-            }
-        }
-
         private void ResetPanel()
         {
             panelGraph.Controls.Clear();
@@ -832,43 +403,6 @@ namespace GraphsClassProjectTakeTwo
             foreach (DataGridViewRow row in tableEdgesWeights.Rows)
             {
                 row.Selected = false;
-            }
-        }
-
-        private void RemoveNode_Click(object sender, EventArgs e)
-        {
-            CurrentGraphOperation = GraphOptions.REMOVE_NODE;
-
-            DoGraphOperation("node that you want to remove");
-        }
-
-        private void RemoveEdge_Click(object sender, EventArgs e)
-        {
-            CurrentGraphOperation = GraphOptions.REMOVE_EDGE;
-
-            DoGraphOperation("starting node of the edge that you want to remove\nOr click on the edge in the Edges-Weights table");
-
-        }
-
-        private void AddEdge_Click(object sender, EventArgs e)
-        {
-            CurrentGraphOperation = GraphOptions.ADD_EDGE;
-
-            DoGraphOperation("starting node that you want to add an edge to");
-
-        }
-
-        private void DoGraphOperation(string operation)
-        {
-            if (CurrentGraph != null)
-            {
-                CreateLinesBetweenNodes(CurrentGraph);
-
-                SelectedNodes = new Vertex[] { null, null };
-
-                ResetTableWeightsSelected();
-
-                MessageBox.Show(CurrentGraph.Vertices.Count == 0 ? "The graph is empty" : "Click on the label near the " + operation);
             }
         }
     }
