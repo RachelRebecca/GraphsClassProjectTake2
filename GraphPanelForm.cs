@@ -6,6 +6,10 @@ using System.Windows.Forms;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Partial class of the Form - this file contains the methods related to the panelGraph (excluding label on click methods)
+    /// Other files are: Form1, EdgesWeightsTableForm, NodeLabelForm, GraphOperationsForm 
+    /// </summary>
     public partial class GraphProject : Form
     {
         /// <summary>

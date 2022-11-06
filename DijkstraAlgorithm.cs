@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Partial class of the Graph - this file contains the Dijsktra's Algorithm methods
+    /// Other files are: KruskalAlgorithm, ToplogicalSort, Graph, PrimAlgorithm, IsConnectedAlgorithm
+    /// </summary>
     public partial class Graph
     {
         public List<Vertex> Dijkstra(Vertex source, Vertex target, out double shortestDistance)

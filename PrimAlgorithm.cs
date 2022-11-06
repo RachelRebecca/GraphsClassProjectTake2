@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Partial class of the Graph - this file contains the Prim Algorithm methods
+    /// Other files are: DijkstraAlgorithm, ToplogicalSort, Graph, KruskalAlgorithm, IsConnectedAlgorithm
+    /// </summary>
     public partial class Graph
     {
         /// <summary>

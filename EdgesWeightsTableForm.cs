@@ -5,6 +5,11 @@ using System.Windows.Forms;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Partial class of the Form - this file contains the Edges-Weights table related methods
+    /// Other files are: Form1, GraphOperationsForm, GraphPanelForm, NodeLabelForm
+    /// </summary>
+
     public partial class GraphProject : Form
     {
         /// <summary>

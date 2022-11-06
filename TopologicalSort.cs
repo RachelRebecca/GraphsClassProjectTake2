@@ -4,6 +4,10 @@ using System.Linq;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Partial class of the Graph - this file contains the Topological Sort methods
+    /// Other files are: DijkstraAlgorithm, KruskalAlgorithm, Graph, PrimAlgorithm, IsConnectedAlgorithm
+    /// </summary>
     public partial class Graph
     {
         public List<Vertex> TopologicalSort()

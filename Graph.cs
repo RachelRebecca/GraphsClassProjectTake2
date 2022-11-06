@@ -5,16 +5,35 @@ using System.Data;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Represents a Graph 
+    ///     - Contains basic information about the graph - takes this information from the database
+    ///     - Contains graph algorithms:
+    ///         - Dijkstra's Algorithm
+    ///         - Kruskal's MST Algorithm
+    ///         - Topological Sort
+    ///         - Prim's MST Algorithm
+    ///         - Connected algorithm
+    ///    
+    /// Graph is split into partial classes - this file contains the basic Graph information
+    /// Other files are: DijkstraAlgorithm, KruskalAlgorithm, TopologicalSort, PrimAlgorithm, IsConnectedAlgorithm
+    /// </summary>
+
     public partial class Graph
     {
+        // Name of the Graph
         public string Name { get; set; }
 
+        // Is weighted flag
         public bool IsWeighted { get; set; }
 
+        //Is directed flag
         public bool IsDirected { get; set; }
 
+        // List of Vertices within the Graph
         public List<Vertex> Vertices { get; set; }
 
+        // List of Edges within the Graph
         public List<Edge> Edges { get; set; }
 
         // TODO: Refactor the Edges.Where and Edges.Find methods 

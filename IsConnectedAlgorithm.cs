@@ -3,6 +3,10 @@ using System.Linq;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Partial class of the Graph - this file contains the Is Connected Algorithm methods
+    /// Other files are: DijkstraAlgorithm, ToplogicalSort, Graph, PrimAlgorithm, KruskalAlgorithm
+    /// </summary>
     public partial class Graph
     {
         /// <summary>

@@ -8,6 +8,18 @@ using System.Windows.Forms;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Form for the Graph Project 
+    ///     - Displays Graph Buttons containing the names of all existing graphs in the database
+    ///     - Displays a Panel showing the nodes, labels, and graph type of the selected graph
+    ///     - Displays graph operation Buttons of things that could be done to the selected graph
+    ///         - Dijkstra's Algorithm, Kruskal's and Prim's MST algorithm, Topological Sort
+    ///         - Remove edge, Remove node, Add edge 
+    ///     - Displays a DataTable showing the selected graph's edges and their corresponding weights
+    ///    
+    /// Form is split into partial classes - this file contains the constructor and the Graph Buttons methods
+    /// Other files are: EdgesWeightsTableForm, GraphOperationsForm, GraphPanelForm, NodeLabelForm
+    /// </summary>
     public partial class GraphProject : Form
     {
         // the SQL Connection which gets created in the form and passed to each Graph

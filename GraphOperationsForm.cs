@@ -4,6 +4,10 @@ using System.Windows.Forms;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Partial class of the Form - this file contains the Graph Operations related methods
+    /// Other files are: Form1, EdgesWeightsTableForm, GraphPanelForm, NodeLabelForm
+    /// </summary>
     public partial class GraphProject : Form
     {
         //enum of all the things that can be done to a given graph

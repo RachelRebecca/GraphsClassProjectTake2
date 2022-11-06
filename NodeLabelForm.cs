@@ -4,6 +4,10 @@ using System.Windows.Forms;
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Partial class of the Form - this file contains the methods on click a label near a node
+    /// Other files are: Form1, EdgesWeightsTableForm, GraphPanelForm, GraphOperationsForm 
+    /// </summary>
     public partial class GraphProject : Form
     {
         // an array of two nodes (a start and end) for the purposes of clicking on two separate nodes and then doing something
