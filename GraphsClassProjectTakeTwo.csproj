@@ -72,6 +72,9 @@
     <Compile Include="GraphOperationsForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GraphPanelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="IsConnectedAlgorithm.cs" />
     <Compile Include="NodeLabelForm.cs">
       <SubType>Form</SubType>
