@@ -114,7 +114,7 @@ namespace GraphsClassProjectTakeTwo
 
             CurrentGraph = graph;
 
-            CurrentGraphOperation = GraphOptions.NONE;
+            CurrentGraphOperation = GraphOperations.NONE;
 
             ShowGraph(graph);
 
@@ -165,7 +165,7 @@ namespace GraphsClassProjectTakeTwo
                 string edgeInTable = (string)table.Rows[dgv.CurrentRow.Index]["Edges"];
                 Edge edge = CurrentGraph.Edges.Find(e => (e.Start.Name + e.End.Name).Equals(edgeInTable) || (e.End.Name + e.Start.Name).Equals(edgeInTable));
 
-                if (CurrentGraphOperation == GraphOptions.REMOVE_EDGE)
+                if (CurrentGraphOperation == GraphOperations.REMOVE_EDGE)
                 {
                     RemoveEdgeTableClick(edge);
                 }

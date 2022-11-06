@@ -70,6 +70,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="IsConnectedAlgorithm.cs" />
+    <Compile Include="NodeLabelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Prompt.cs" />
     <Compile Include="DijkstraAlgorithm.cs" />
     <Compile Include="Edge.cs" />
