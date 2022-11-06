@@ -4,7 +4,6 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace GraphsClassProjectTakeTwo
@@ -101,7 +100,6 @@ namespace GraphsClassProjectTakeTwo
         /// All the methods done when user clicks on a graph
         /// </summary>
         /// <param name="sender">The graph button being clicked on</param>
-        /// <param name="e">The event argument</param>
         private void GraphButton_Click(object sender, EventArgs e)
         {
             ResetPanel();
@@ -123,8 +121,13 @@ namespace GraphsClassProjectTakeTwo
             CreateEdgesWeightsTable(graph);
         }
 
+        /// <summary>
+        /// Highlight the selected graph button
+        /// </summary>
+        /// <param name="button">The selected graph Button</param>
         private void HighlightSelectedGraphButton(Button button)
         {
+            // remove any existing highlights
             if (CurrentGraph != null)
             {
                 foreach (Control ctrl in panelGraphButtons.Controls)
@@ -134,19 +137,19 @@ namespace GraphsClassProjectTakeTwo
                 }
             }
 
+            // highlight this button
             button.BackColor = Color.LightPink;
             button.ForeColor = Color.White;
         }
 
+        /// <summary>
+        /// A complete reset of panelGraph, Edges-Weights table, and SelectedNodes array
+        /// </summary>
         private void ResetForm()
         {
             ShowGraph(CurrentGraph);
 
-            CreateLinesBetweenNodes(CurrentGraph);
-
             CreateEdgesWeightsTable(CurrentGraph);
-
-            ResetEdgesWeightsTable();
 
             SelectedNodes = new Vertex[] { null, null };
         }

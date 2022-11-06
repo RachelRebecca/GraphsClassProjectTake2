@@ -25,6 +25,7 @@ namespace GraphsClassProjectTakeTwo
             }
 
             tableEdgesWeights.DataSource = table;
+            tableEdgesWeights.Refresh();
         }
 
         /// <summary>
