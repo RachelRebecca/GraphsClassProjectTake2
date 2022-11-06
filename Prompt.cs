@@ -2,8 +2,17 @@
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Static class making a Dialog with user input
+    /// </summary>
     public static class Prompt
     {
+        /// <summary>
+        /// Shows the Dialog with user input
+        /// </summary>
+        /// <param name="text">The text of the Dialog</param>
+        /// <param name="caption">The caption of the Dialog</param>
+        /// <returns></returns>
         public static string ShowDialog(string text, string caption)
         {
             Form prompt = new Form()

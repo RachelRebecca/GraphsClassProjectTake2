@@ -10,7 +10,7 @@ namespace GraphsClassProjectTakeTwo
     /// </summary>
     public partial class GraphProject : Form
     {
-        // an array of two nodes (a start and end) for the purposes of clicking on two separate nodes and then doing something
+        // An array of two nodes (a start and end) for the purposes of clicking on two separate nodes and then doing something
         private Vertex[] SelectedNodes = new Vertex[] { null, null };
 
         /// <summary>
@@ -202,8 +202,7 @@ namespace GraphsClassProjectTakeTwo
         }
 
         /// <summary>
-        /// On click label near a node after clicking on AddEdge 
-        /// Since requires clicking on two labels, check to see which one is start and end using SelectedNodes
+        /// On click label near a node after clicking on AddEdge, use SelectedNodes to find start and end
         /// </summary>
         /// <param name="label">The label near selected node</param>
         private void AddEdgeLabelClick(Label label)

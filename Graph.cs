@@ -37,6 +37,12 @@ namespace GraphsClassProjectTakeTwo
         public List<Edge> Edges { get; set; }
 
         // TODO: Refactor the Edges.Where and Edges.Find methods 
+
+        /// <summary>
+        /// Constructor, loads the graph
+        /// </summary>
+        /// <param name="name">The name of the graph</param>
+        /// <param name="sqlCon">The open SQL Connection used to load the graph</param>
         public Graph(string name, SqlConnection sqlCon)
         {
             this.Name = name;
@@ -50,7 +56,7 @@ namespace GraphsClassProjectTakeTwo
         /// Sets the graph's IsDirected, IsWeighted, Vertices, Edges
         /// </summary>
         /// <param name="sqlCon">The open SQL connection getting the graph information from the database</param>
-        /// <returns>if loading the graph was successful or not</returns>
+        /// <returns>If loading the graph was successful or not</returns>
         public bool LoadGraph(SqlConnection sqlCon)
         {
             bool retVal = true;
@@ -155,12 +161,12 @@ namespace GraphsClassProjectTakeTwo
         /// <param name="row">The specific index for this edge from the DataSet's table</param>
         /// <param name="initialNode">out parameter for the name of the initial vertex</param>
         /// <param name="terminalNode">out parameter for the name of the terminal vertex</param>
-        /// <param name="weight">the weight of the edge (1 if !IsWeighted)</param>
+        /// <param name="weight">The weight of the edge (1 if !IsWeighted)</param>
         /// <param name="ix">out parameter for the x coordinate of the initial node</param>
         /// <param name="iy">out parameter for the y coordinate of the initial node</param>
         /// <param name="tx">out parameter for the x coordinate of the terminal node</param>
         /// <param name="ty">out parameter for the y coordinate of the terminal node</param>
-        /// <exception cref="Exception">invalid row value</exception>
+        /// <exception cref="Exception">Invalid row value</exception>
         private static void GetSpecificEdgeValues(DataSet dataSet2, int row, out string initialNode, out string terminalNode, out double weight, out double ix, out double iy, out double tx, out double ty)
         {
             initialNode = (string)dataSet2.Tables["Edges"].Rows[row].ItemArray[0];
@@ -191,11 +197,11 @@ namespace GraphsClassProjectTakeTwo
         /// <summary>
         /// Update the Vertices list and add edge between the initial and terminal vertex
         /// </summary>
-        /// <param name="weight">the weight of the edge</param>
-        /// <param name="initialIndex">index of initial vertex in Vertices list or -1 if not in Vertices list</param>
-        /// <param name="terminalIndex">index of terminal vertex in Vertices list or -1 if not in Vertices list</param>
-        /// <param name="initial">initial Vertex</param>
-        /// <param name="terminal">terminal Vertex</param>
+        /// <param name="weight">The weight of the edge</param>
+        /// <param name="initialIndex">Index of initial vertex in Vertices list or -1 if not in Vertices list</param>
+        /// <param name="terminalIndex">Index of terminal vertex in Vertices list or -1 if not in Vertices list</param>
+        /// <param name="initial">Initial Vertex</param>
+        /// <param name="terminal">Terminal Vertex</param>
         private void UpdateVertices(double weight, int initialIndex, int terminalIndex, Vertex initial, Vertex terminal)
         {
             if (initialIndex < 0 && terminalIndex < 0)

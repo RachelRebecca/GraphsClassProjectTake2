@@ -16,10 +16,10 @@ namespace GraphsClassProjectTakeTwo
         // ToolTip for the graph operation buttons
         private readonly ToolTip ToolTip = new ToolTip();
 
-        // the current Graph showing in the main panel
+        // The current Graph showing in the main panel
         private Graph CurrentGraph = null;
 
-        // the current Graph Operation being done to the graph
+        // The current Graph Operation being done to the graph
         private GraphOperations CurrentGraphOperation = GraphOperations.NONE;
   
         /// <summary>
@@ -56,8 +56,8 @@ namespace GraphsClassProjectTakeTwo
         /// When mouse moves over panelGraphOperations, determines if hovering over a graph operation button
         /// If yes, checks if button is disabled and displays a ToolTip explaining why it's disabled  
         /// </summary>
-        /// <param name="sender">the control firing this event</param>
-        /// <param name="e">the MouseEventArgument, used to determine location of mouse</param>
+        /// <param name="sender">The control firing this event</param>
+        /// <param name="e">The MouseEventArgument, used to determine location of mouse</param>
         private void GraphOperations_MouseMove(object sender, MouseEventArgs e)
         {
             Control ctrl = ((Panel)sender).GetChildAtPoint(e.Location);
@@ -212,11 +212,9 @@ namespace GraphsClassProjectTakeTwo
         }
 
         /// <summary>
-        /// Sets up the Graph Operation once clicked
-        /// resets the panel, the SelectedNodes array, the table weights,
-        /// and sets the CurrentGraphOperation
+        /// Sets up the Graph Operation and does some resetting
         /// </summary>
-        /// <param name="operation">the current graph operation</param>
+        /// <param name="operation">The current graph operation</param>
         private void SetUpForGraphOperation(GraphOperations operation)
         {
             if (CurrentGraph != null)

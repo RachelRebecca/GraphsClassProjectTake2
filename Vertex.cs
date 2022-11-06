@@ -2,6 +2,11 @@
 
 namespace GraphsClassProjectTakeTwo
 {
+    /// <summary>
+    /// Represents a Vertex
+    ///     - Contains basic information about Vertex 
+    ///     - Contains an Edges List of all edges pointing to this Vertex
+    /// </summary>
     public class Vertex
     {
         // Name of Vertex

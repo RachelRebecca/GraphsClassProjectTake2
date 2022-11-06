@@ -13,9 +13,9 @@ namespace GraphsClassProjectTakeTwo
         /// <summary>
         /// Does Prim's Minimum Spanning Tree algorithm from a starting Vertex
         /// </summary>
-        /// <param name="start">the starting Vertex</param>
+        /// <param name="start">The starting Vertex</param>
         /// <returns></returns>
-        /// <exception cref="Exception">forbidden algorithm attempt</exception>
+        /// <exception cref="Exception">Forbidden algorithm attempt</exception>
         public List<Edge> Prim(Vertex start)
         {
             // Has to be a graph (weighted or unweighted)

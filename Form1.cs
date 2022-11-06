@@ -22,12 +22,15 @@ namespace GraphsClassProjectTakeTwo
     /// </summary>
     public partial class GraphProject : Form
     {
-        // the SQL Connection which gets created in the form and passed to each Graph
+        // The SQL Connection which gets created in the form and passed to each Graph
         public SqlConnection SqlCon;
 
-        // the names of all the graphs
+        // The names of all the graphs
         public List<string> GraphNames { get; set; }
 
+        /// <summary>
+        /// Constructor, makes the SQL connection, initializes the Graph Buttons
+        /// </summary>
         public GraphProject()
         {
             InitializeComponent();
@@ -42,7 +45,7 @@ namespace GraphsClassProjectTakeTwo
         /// <summary>
         /// Make the SQL connection using App.config and open it
         /// </summary>
-        /// <returns>the open SQL connection</returns>
+        /// <returns>The open SQL connection</returns>
         public SqlConnection MakeSQLConnection()
         {
             var server = ConfigurationManager.AppSettings["SERVER"];
@@ -56,7 +59,7 @@ namespace GraphsClassProjectTakeTwo
         }
 
         /// <summary>
-        /// Use stored procedure to get all the existing graph names
+        /// Uses stored procedure to get all the existing graph names
         /// </summary>
         /// <param name="sqlCon">The SQL connection getting the names from the database</param>
         /// <returns>List containing all the graph names</returns>
