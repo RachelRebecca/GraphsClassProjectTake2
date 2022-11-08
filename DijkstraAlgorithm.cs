@@ -10,6 +10,14 @@ namespace GraphsClassProjectTakeTwo
     /// </summary>
     public partial class Graph
     {
+        /// <summary>
+        /// Dijkstra's Algorithm finds the shortest path between any two given nodes in a Graph
+        /// </summary>
+        /// <param name="source">Starting Vertex</param>
+        /// <param name="target">Ending Vertex</param>
+        /// <param name="shortestDistance">out param, the shortest distance between them</param>
+        /// <returns>The shortest path (a List of Vertices)</returns>
+        /// <exception cref="Exception">Forbidden algorithm attempt or source and target are the same</exception>
         public List<Vertex> Dijkstra(Vertex source, Vertex target, out double shortestDistance)
         { 
 
@@ -38,7 +46,6 @@ namespace GraphsClassProjectTakeTwo
 
                 foreach (Edge edge in IsDirected ? currentEdgesForDirected : currentEdgesForUndirected)
                 {
-                    // TODO: refactor, this is used in Prim
                     Vertex neighbor = edge.Start.Equals(currNode.Vertex) ? edge.End : edge.Start;
                     currNode = UpdateStructs(vertexAndStruct, currNode, out DijkstraStruct currStruct, out double newDistance, neighbor);
 
@@ -54,6 +61,9 @@ namespace GraphsClassProjectTakeTwo
             return path;
         }
 
+        /// <summary>
+        /// struct to keep track of shortest paths to each vertex
+        /// </summary>
         struct DijkstraStruct
         {
             internal bool SdFound { get; set; }
@@ -70,6 +80,15 @@ namespace GraphsClassProjectTakeTwo
             }
         }
 
+        /// <summary>
+        /// Updates the DijkstraStructs with newly found paths
+        /// </summary>
+        /// <param name="vertexStructs">DijkstraStruct for each of the vertices found</param>
+        /// <param name="currNode">The node currently being examined</param>
+        /// <param name="currStruct">out param, DijkstraStruct made with current node</param>
+        /// <param name="newDistance">out param, newest shortest distance</param>
+        /// <param name="neighbor">The vertex next to current node whose path with current node is being explored</param>
+        /// <returns>A DijkstraStruct</returns>
         private DijkstraStruct UpdateStructs(Dictionary<Vertex, DijkstraStruct> vertexStructs, DijkstraStruct currNode,
                                              out DijkstraStruct currStruct, out double newDistance, Vertex neighbor)
         {
@@ -101,7 +120,13 @@ namespace GraphsClassProjectTakeTwo
             return currNode;
         }
 
-
+        /// <summary>
+        /// Choose the next node to begin examining
+        /// </summary>
+        /// <param name="vertexStructs">DijkstraStruct for each of the vertices found</param>
+        /// <param name="currNode">The previous node being examined</param>
+        /// <returns>DijkstraStruct for the node now being examined</returns>
+        /// <exception cref="Exception">No path exists</exception>
         private DijkstraStruct GetNewCurrNode(Dictionary<Vertex, DijkstraStruct> vertexStructs, DijkstraStruct currNode)
         {
             int maxVal = int.MaxValue;
@@ -124,13 +149,20 @@ namespace GraphsClassProjectTakeTwo
                 throw new Exception("No path exists");
             }
 
-
             currNode.SdFound = true;
             vertexStructs.Remove(currNode.Vertex);
             vertexStructs.Add(currNode.Vertex, currNode);
             return currNode;
         }
 
+        /// <summary>
+        /// Update the shortest path
+        /// </summary>
+        /// <param name="path">The unfinished shortest path</param>
+        /// <param name="source">The node that we're backtracking towards</param>
+        /// <param name="vertexStructs">DijkstraStruct for each of the vertices found</param>
+        /// <param name="currNode">The vertex being added to the path</param>
+        /// <returns></returns>
         private List<Vertex> UpdatePath(List<Vertex> path, Vertex source, Dictionary<Vertex, DijkstraStruct> vertexStructs, DijkstraStruct currNode)
         {
             Vertex parent = currNode.Parent;
@@ -145,8 +177,6 @@ namespace GraphsClassProjectTakeTwo
             path.Add(currNode.Vertex);
 
             return path;
-
         }
-
     }
 }

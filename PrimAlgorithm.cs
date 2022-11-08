@@ -14,7 +14,7 @@ namespace GraphsClassProjectTakeTwo
         /// Does Prim's Minimum Spanning Tree algorithm from a starting Vertex
         /// </summary>
         /// <param name="start">The starting Vertex</param>
-        /// <returns></returns>
+        /// <returns>List of Edges in a MST</returns>
         /// <exception cref="Exception">Forbidden algorithm attempt</exception>
         public List<Edge> Prim(Vertex start)
         {
@@ -87,7 +87,7 @@ namespace GraphsClassProjectTakeTwo
         }
 
         /// <summary>
-        /// struct for a Prim - contains the node, its cost, and parent
+        /// struct for a Prim - for each Node, gives the cost to get to it from a given parent
         /// </summary>
         struct PrimStruct
         {
